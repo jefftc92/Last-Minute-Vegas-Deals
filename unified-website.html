@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelHen.com - Las Vegas Deals & Quiz</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* ===== GLOBAL STYLES ===== */
+        :root {
+            --primary-color: #1f2937;
+            --secondary-color: #3b82f6;
+            --accent-color: #f59e0b;
+            --text-color: #1f2937;
+            --light-text: #6b7280;
+            --background: #ffffff;
+            --card-bg: #f9fafb;
+            --border-color: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --radius: 8px;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background);
+        }
+
+        /* ===== NAVIGATION ===== */
+        .nav-container {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            padding: var(--spacing-sm) 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .nav-tab {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-tab:hover,
+        .nav-tab.active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== DEALS SECTION ===== */
+        .deals-section {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow);
+        }
+
+        .deals-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .deals-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .deals-subtitle {
+            font-size: 1.2rem;
+            color: var(--light-text);
+        }
+
+        /* ===== QUIZ SECTION ===== */
+        .quiz-section {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow);
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .quiz-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .quiz-subtitle {
+            font-size: 1.2rem;
+            color: var(--light-text);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .nav-content {
+                flex-direction: column;
+                gap: var(--spacing-sm);
+            }
+
+            .nav-tabs {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .main-content {
+                padding: var(--spacing-md);
+            }
+
+            .deals-title,
+            .quiz-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* ===== QUIZ STYLES ===== */
+        .quiz-container {
+            max-width: 950px;
+            margin: 0 auto;
+            padding: 40px 40px 48px 40px;
+            background-color: white;
+            box-shadow: 0 0 30px rgba(0,0,0,0.15);
+            border-radius: 20px;
+            border: 3px solid #ffdd00;
+        }
+
+        .quiz-container h1 {
+            font-size: clamp(1.7rem, 5vw, 2.6rem);
+            text-align: center;
+            color: #ff1493;
+            margin-bottom: 18px;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1.1;
+            text-shadow: 2px 2px 0px #ffdd00;
+        }
+
+        .title-accent {
+            display: block;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(90deg, #ffdc00 40%, #ff7a00 100%);
+            border-radius: 2px;
+            margin: 8px auto 14px auto;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 36px;
+            font-size: 1.45rem;
+            color: #444;
+            line-height: 1.5;
+        }
+
+        .question {
+            display: none;
+            margin-bottom: 40px;
+        }
+
+        .question.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .question-text {
+            font-size: clamp(1.1rem, 4vw, 1.4rem);
+            margin-bottom: 18px;
+            text-align: center;
+            font-weight: 700;
+            color: #00bfff;
+            background-color: #f9f9f9;
+            padding: 14px 8px 18px 8px;
+            border-radius: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .option {
+            width: calc(50% - 20px);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 3px solid transparent;
+        }
+
+        .option:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            border-color: #ffdd00;
+        }
+
+        .option img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .option::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 1;
+            pointer-events: none;
+            transition: background 0.3s;
+        }
+
+        .option:hover::before {
+            background: rgba(0,0,0,0.15);
+        }
+
+        .option-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.92), rgba(0,0,0,0.65), rgba(0,0,0,0.15));
+            color: white;
+            padding: 24px 15px;
+            font-weight: 900;
+            text-align: center;
+            font-size: 1.35rem;
+            text-shadow: 1px 1px 6px rgba(0,0,0,0.9);
+            z-index: 2;
+            transition: all 0.35s;
+        }
+
+        .option:hover .option-label {
+            top: 12px;
+            left: 12px;
+            right: auto;
+            bottom: auto;
+            background: rgba(0,0,0,0.35);
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 10px;
+            font-size: 1rem;
+            text-align: left;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            opacity: 1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+        }
+
+        .progress-container {
+            margin: 36px auto 24px auto;
+            width: 92%;
+            height: 32px;
+            background-color: #f7f7fa;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+            border: 1.5px solid #e0e0e0;
+            box-sizing: border-box;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #ff1493, #b24bf3, #00bfff);
+            transition: width 0.3s ease;
+            border-radius: 30px;
+            background-size: 200% 100%;
+            animation: gradient-shift 3s ease infinite;
+            box-sizing: border-box;
+            margin: 0;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .result {
+            display: none;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .result h2 {
+            font-size: 2.5rem;
+            color: #ff1493;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .result-image {
+            width: 300px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin: 20px auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .restart-button {
+            background: linear-gradient(135deg, #ff1493, #b24bf3);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .restart-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 20, 147, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <div class="nav-content">
+            <a href="#" class="logo">TravelHen.com</a>
+            <div class="nav-tabs">
+                <a href="#deals" class="nav-tab active" data-section="deals">Vegas Deals</a>
+                <a href="#quiz" class="nav-tab" data-section="quiz">Vegas Quiz</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Deals Section -->
+        <section id="deals" class="content-section active">
+            <div class="deals-section">
+                <div class="deals-header">
+                    <h1 class="deals-title">Last Minute Vegas Deals</h1>
+                    <p class="deals-subtitle">Find the best hotel deals in Las Vegas before they're gone!</p>
+                </div>
+                
+                <!-- Deals content will be loaded here -->
+                <div id="deals-content">
+                    <p>Loading deals...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="quiz" class="content-section">
+            <div class="quiz-section">
+                <div class="quiz-header">
+                    <h1 class="quiz-title">Which Vegas Hotel is Right for You?</h1>
+                    <p class="quiz-subtitle">Take our quiz to find your perfect Las Vegas hotel match!</p>
+                </div>
+                
+                <!-- Quiz content will be loaded here -->
+                <div id="quiz-content">
+                    <p>Loading quiz...</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Navigation functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const navTabs = document.querySelectorAll('.nav-tab');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            // Handle navigation tab clicks
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all tabs and sections
+                    navTabs.forEach(t => t.classList.remove('active'));
+                    contentSections.forEach(s => s.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Show corresponding content section
+                    const targetSection = this.getAttribute('data-section');
+                    document.getElementById(targetSection).classList.add('active');
+                    
+                    // Load content if not already loaded
+                    loadSectionContent(targetSection);
+                });
+            });
+
+            // Load initial content
+            loadSectionContent('deals');
+        });
+
+        // Load section content
+        function loadSectionContent(section) {
+            if (section === 'deals') {
+                loadDealsContent();
+            } else if (section === 'quiz') {
+                loadQuizContent();
+            }
+        }
+
+        // Load deals content
+        function loadDealsContent() {
+            const dealsContent = document.getElementById('deals-content');
+            if (dealsContent.innerHTML === '<p>Loading deals...</p>') {
+                // For now, show a message and link to the deals page
+                dealsContent.innerHTML = `
+                    <div style="text-align: center; padding: 2rem;">
+                        <h2 style="margin-bottom: 1rem;">Vegas Deals Coming Soon!</h2>
+                        <p style="margin-bottom: 2rem;">We're integrating the deals page. For now, you can view the deals at:</p>
+                        <a href="vegas-deals.html" style="
+                            display: inline-block;
+                            background: var(--secondary-color);
+                            color: white;
+                            padding: 1rem 2rem;
+                            text-decoration: none;
+                            border-radius: var(--radius);
+                            font-weight: 600;
+                            transition: all 0.3s ease;
+                        ">View Vegas Deals</a>
+                    </div>
+                `;
+            }
+        }
+
+        // Load quiz content
+        function loadQuizContent() {
+            const quizContent = document.getElementById('quiz-content');
+            if (quizContent.innerHTML === '<p>Loading quiz...</p>') {
+                // Load the quiz content directly
+                quizContent.innerHTML = `
+                    <div class="quiz-container">
+                        <h1>WHICH LAS VEGAS HOTEL IS RIGHT FOR YOU?</h1>
+                        <div class="title-accent"></div>
+                        
+                        <div class="intro">
+                            Take our fun quiz to discover the perfect Las Vegas hotel for your next adventure! 
+                            Answer a few questions and we'll match you with your ideal stay.
+                        </div>
+                        
+                        <div class="progress-container">
+                            <div class="progress-bar" id="progress-bar"></div>
+                        </div>
+                        
+                        <div class="question active" id="question-1">
+                            <div class="question-text">What's your budget style?</div>
+                            <div class="options">
+                                <div class="option" data-value="bargain">
+                                    <img src="../LAS VEGAS QUIZ/LAS_VEGAS_QUIZ/Budget_Hotel.png" alt="Budget Hotel">
+                                    <div class="option-label">Budget Bargain</div>
+                                </div>
+                                <div class="option" data-value="value">
+                                    <img src="../LAS VEGAS QUIZ/LAS_VEGAS_QUIZ/Value_Hotel.png" alt="Value Hotel">
+                                    <div class="option-label">Good Value</div>
+                                </div>
+                                <div class="option" data-value="treat">
+                                    <img src="../LAS VEGAS QUIZ/LAS_VEGAS_QUIZ/Treat_hotel.png" alt="Treat Hotel">
+                                    <div class="option-label">Special Treat</div>
+                                </div>
+                                <div class="option" data-value="luxury">
+                                    <img src="../LAS VEGAS QUIZ/LAS_VEGAS_QUIZ/Sky_hotel.png" alt="Luxury Hotel">
+                                    <div class="option-label">Luxury Experience</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="question" id="question-2">
+                            <div class="question-text">Who are you traveling with?</div>
+                            <div class="options">
+                                <div class="option" data-value="solo">
+                                    <img src="../LAS VEGAS QUIZ/LAS_VEGAS_QUIZ/adult_pool.png" alt="Solo Travel">
+                                    <div class="option-label">Solo Adventure</div>
+                                </div>
+                                <div class="option" data-value="couple">
+                                    <img src="../LAS VEGAS QUIZ/LAS_VEGAS_QUIZ/adult_pool.png" alt="Couple">
+                                    <div class="option-label">Romantic Getaway</div>
+                                </div>
+                                <div class="option" data-value="friends">
+                                    <img src="../LAS VEGAS QUIZ/LAS_VEGAS_QUIZ/adult_pool.png" alt="Friends">
+                                    <div class="option-label">Friends Trip</div>
+                                </div>
+                                <div class="option" data-value="family">
+                                    <img src="../LAS VEGAS QUIZ/LAS_VEGAS_QUIZ/adult_pool.png" alt="Family">
+                                    <div class="option-label">Family Fun</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="question" id="question-3">
+                            <div class="question-text">What's most important for your stay?</div>
+                            <div class="options">
+                                <div class="option" data-value="location">
+                                    <img src="../LAS VEGAS QUIZ/LAS_VEGAS_QUIZ/Strip Location/center_strip.png" alt="Location">
+                                    <div class="option-label">Prime Location</div>
+                                </div>
+                                <div class="option" data-value="entertainment">
+                                    <img src="../LAS VEGAS QUIZ/LAS_VEGAS_QUIZ/Strip Location/center_strip.png" alt="Entertainment">
+                                    <div class="option-label">Shows & Entertainment</div>
+                                </div>
+                                <div class="option" data-value="dining">
+                                    <img src="../LAS VEGAS QUIZ/LAS_VEGAS_QUIZ/Strip Location/center_strip.png" alt="Dining">
+                                    <div class="option-label">Fine Dining</div>
+                                </div>
+                                <div class="option" data-value="relaxation">
+                                    <img src="../LAS VEGAS QUIZ/LAS_VEGAS_QUIZ/Strip Location/center_strip.png" alt="Relaxation">
+                                    <div class="option-label">Relaxation & Spa</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="question" id="question-4">
+                            <div class="question-text">What's your vacation vibe?</div>
+                            <div class="options">
+                                <div class="option" data-value="party">
+                                    <img src="../LAS VEGAS QUIZ/LAS_VEGAS_QUIZ/Vacation Vibe/party.png" alt="Party">
+                                    <div class="option-label">Party & Nightlife</div>
+                                </div>
+                                <div class="option" data-value="adventure">
+                                    <img src="../LAS VEGAS QUIZ/LAS_VEGAS_QUIZ/Vacation Vibe/adventure.png" alt="Adventure">
+                                    <div class="option-label">Adventure & Exploration</div>
+                                </div>
+                                <div class="option" data-value="culture">
+                                    <img src="../LAS VEGAS QUIZ/LAS_VEGAS_QUIZ/Vacation Vibe/culture.png" alt="Culture">
+                                    <div class="option-label">Culture & Arts</div>
+                                </div>
+                                <div class="option" data-value="relaxation">
+                                    <img src="../LAS VEGAS QUIZ/LAS_VEGAS_QUIZ/Vacation Vibe/relaxation.png" alt="Relaxation">
+                                    <div class="option-label">Relaxation & Wellness</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="result" id="result">
+                            <h2>Your Perfect Hotel Match!</h2>
+                            <div id="result-content"></div>
+                            <button class="restart-button" onclick="restartQuiz()">Take Quiz Again</button>
+                        </div>
+                    </div>
+                `;
+                
+                // Initialize quiz functionality
+                initializeQuiz();
+            }
+        }
+
+        // Quiz functionality
+        let currentQuestion = 0;
+        let answers = {};
+        const questions = ['question-1', 'question-2', 'question-3', 'question-4'];
+
+        function initializeQuiz() {
+            // Add click handlers to options
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const value = this.dataset.value;
+                    const questionId = this.closest('.question').id;
+                    const questionIndex = questions.indexOf(questionId);
+                    
+                    answers[questionIndex] = value;
+                    
+                    // Update progress bar
+                    const progress = ((questionIndex + 1) / questions.length) * 100;
+                    document.getElementById('progress-bar').style.width = progress + '%';
+                    
+                    // Show next question or result
+                    if (questionIndex < questions.length - 1) {
+                        showQuestion(questionIndex + 1);
+                    } else {
+                        showResult();
+                    }
+                });
+            });
+        }
+
+        function showQuestion(index) {
+            // Hide all questions
+            questions.forEach(q => {
+                document.getElementById(q).classList.remove('active');
+            });
+            
+            // Show current question
+            document.getElementById(questions[index]).classList.add('active');
+        }
+
+        function showResult() {
+            // Hide all questions
+            questions.forEach(q => {
+                document.getElementById(q).classList.remove('active');
+            });
+            
+            // Show result
+            document.getElementById('result').style.display = 'block';
+            
+            // Generate result based on answers
+            const result = generateResult(answers);
+            document.getElementById('result-content').innerHTML = result;
+        }
+
+        function generateResult(answers) {
+            // Simple result generation logic
+            const budget = answers[0] || 'value';
+            const travelGroup = answers[1] || 'couple';
+            const priority = answers[2] || 'location';
+            const vibe = answers[3] || 'party';
+            
+            let hotelName = 'The Venetian Resort Las Vegas';
+            let description = 'A perfect blend of luxury and entertainment!';
+            let imageSrc = '../LAS VEGAS QUIZ/LAS_VEGAS_QUIZ/Hotels/venetian.png';
+            
+            // Customize based on answers
+            if (budget === 'bargain') {
+                hotelName = 'Flamingo Las Vegas Hotel & Casino';
+                description = 'Great value with classic Vegas charm!';
+                imageSrc = '../LAS VEGAS QUIZ/LAS_VEGAS_QUIZ/Hotels/flamingo.png';
+            } else if (budget === 'luxury') {
+                hotelName = 'Bellagio Resort & Casino';
+                description = 'Ultimate luxury with world-class amenities!';
+                imageSrc = '../LAS VEGAS QUIZ/LAS_VEGAS_QUIZ/Hotels/bellagio.png';
+            }
+            
+            return `
+                <h3 style="font-size: 1.8rem; color: #00bfff; margin-bottom: 1rem;">${hotelName}</h3>
+                <p style="font-size: 1.2rem; color: #666; margin-bottom: 1.5rem;">${description}</p>
+                <img src="${imageSrc}" alt="${hotelName}" class="result-image" onerror="this.style.display='none'">
+                <p style="font-size: 1rem; color: #888; margin-top: 1rem;">
+                    Based on your preferences for ${budget} style, ${travelGroup} travel, 
+                    prioritizing ${priority}, and seeking a ${vibe} vibe!
+                </p>
+            `;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = {};
+            
+            // Reset progress bar
+            document.getElementById('progress-bar').style.width = '0%';
+            
+            // Hide result
+            document.getElementById('result').style.display = 'none';
+            
+            // Show first question
+            questions.forEach((q, index) => {
+                document.getElementById(q).classList.toggle('active', index === 0);
+            });
+        }
+    </script>
+</body>
+</html> 
