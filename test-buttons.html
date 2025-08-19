@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .test-button {
+            background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin: 10px;
+            display: block;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .carousel-test {
+            width: 300px;
+            height: 200px;
+            background: #ddd;
+            position: relative;
+            margin: 20px 0;
+        }
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        .carousel-btn.prev { left: 10px; }
+        .carousel-btn.next { right: 10px; }
+        .debug {
+            background: #333;
+            color: #0f0;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Button Functionality Test</h1>
+    
+    <div class="debug" id="debug">
+        Debug: JavaScript loading...
+    </div>
+    
+    <button class="test-button" id="testBtn1">Test Button 1 - Alert</button>
+    <button class="test-button" id="testBtn2">Test Button 2 - Console Log</button>
+    <button class="test-button" id="testBtn3">Test Button 3 - Navigate to Expedia</button>
+    
+    <div class="carousel-test">
+        <p style="text-align: center; padding-top: 80px;">Carousel Test Area</p>
+        <button class="carousel-btn prev" id="prevBtn">‹</button>
+        <button class="carousel-btn next" id="nextBtn">›</button>
+    </div>
+
+    <script>
+        console.log('=== SCRIPT STARTING ===');
+        document.getElementById('debug').textContent = 'Debug: Script loaded successfully!';
+        
+        // Test 1: Simple alert
+        document.getElementById('testBtn1').addEventListener('click', function() {
+            console.log('Test Button 1 clicked!');
+            alert('Test Button 1 clicked successfully!');
+            document.getElementById('debug').textContent = 'Debug: Button 1 clicked at ' + new Date().toLocaleTimeString();
+        });
+        
+        // Test 2: Console log only
+        document.getElementById('testBtn2').addEventListener('click', function() {
+            console.log('Test Button 2 clicked!');
+            document.getElementById('debug').textContent = 'Debug: Button 2 clicked at ' + new Date().toLocaleTimeString();
+        });
+        
+        // Test 3: Navigate to Expedia
+        document.getElementById('testBtn3').addEventListener('click', function() {
+            console.log('Test Button 3 clicked - navigating to Expedia');
+            document.getElementById('debug').textContent = 'Debug: Button 3 clicked - navigating...';
+            
+            try {
+                const newWindow = window.open('https://www.expedia.com', '_blank');
+                if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                    console.log('Popup blocked, trying same window...');
+                    document.getElementById('debug').textContent = 'Debug: Popup blocked, trying same window...';
+                    window.location.href = 'https://www.expedia.com';
+                } else {
+                    console.log('New window opened successfully');
+                    document.getElementById('debug').textContent = 'Debug: New window opened successfully';
+                }
+            } catch (e) {
+                console.error('Error opening window:', e);
+                document.getElementById('debug').textContent = 'Debug: Error - ' + e.message;
+            }
+        });
+        
+        // Test carousel buttons
+        console.log('Trying to attach carousel event listeners...');
+        
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        
+        console.log('prevBtn element:', prevBtn);
+        console.log('nextBtn element:', nextBtn);
+        
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function(e) {
+                console.log('Prev button clicked!', e);
+                document.getElementById('debug').textContent = 'Debug: Prev button clicked at ' + new Date().toLocaleTimeString();
+            });
+            console.log('Prev button listener attached');
+        } else {
+            console.error('prevBtn not found!');
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function(e) {
+                console.log('Next button clicked!', e);
+                document.getElementById('debug').textContent = 'Debug: Next button clicked at ' + new Date().toLocaleTimeString();
+            });
+            console.log('Next button listener attached');
+        } else {
+            console.error('nextBtn not found!');
+        }
+        
+        console.log('=== SCRIPT COMPLETED ===');
+        // Don't overwrite debug message immediately
+        setTimeout(() => {
+            if (document.getElementById('debug').textContent.includes('Script loaded')) {
+                document.getElementById('debug').textContent = 'Debug: All event listeners attached successfully!';
+            }
+        }, 100);
+    </script>
+</body>
+</html> 

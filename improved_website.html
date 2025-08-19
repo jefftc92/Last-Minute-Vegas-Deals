@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Last Minute Las Vegas Hotel Deals - VegasDeals.com</title>
+    <meta name="description" content="Find exclusive last-minute hotel deals in Las Vegas. Limited time offers on luxury resorts and casinos on the Strip.">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+        /* ===== FONTS & BASE STYLES ===== */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            /* Color Palette */
+            --primary-blue: #2563eb;
+            --primary-blue-light: #3b82f6;
+            --primary-blue-dark: #1d4ed8;
+            --accent-cyan: #06b6d4;
+            --accent-amber: #f59e0b;
+            --success-green: #10b981;
+            --error-red: #ef4444;
+            --warning-orange: #f97316;
+            
+            /* Grays */
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+            line-height: 1.6;
+            color: var(--gray-800);
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* ===== LAYOUT COMPONENTS ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-md);
+        }
+        
+        .main-content {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+        }
+        
+        /* ===== NAVIGATION ===== */
+        .navbar {
+            background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
+            padding: var(--spacing-lg) var(--spacing-xl);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+        
+        .navbar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+            pointer-events: none;
+        }
+        
+        .site-title {
+            color: white;
+            font-size: 1.875rem;
+            font-weight: 800;
+            text-decoration: none;
+            letter-spacing: -0.025em;
+            transition: all 0.3s ease;
+        }
+        
+        .site-title:hover {
+            color: var(--accent-cyan);
+            transform: translateY(-1px);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: var(--spacing-xl);
+        }
+        
+        .nav-links a {
+            color: var(--gray-300);
+            text-decoration: none;
+            font-weight: 500;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-links a:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .nav-links a:focus {
+            outline: 2px solid var(--accent-cyan);
+            outline-offset: 2px;
+        }
+        
+        /* ===== CONTENT SECTIONS ===== */
+        .content-wrapper {
+            padding: var(--spacing-2xl);
+        }
+        
+        .active-deals-count {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-700);
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
+            border-radius: var(--radius-lg);
+            display: inline-block;
+            border: 1px solid var(--gray-300);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        /* ===== VISITORS COUNTER ===== */
+        .visitors-count-fixed {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            transition: all 0.5s ease;
+            border: 1px solid var(--gray-200);
+            max-width: 280px;
+            pointer-events: none;
+        }
+        
+        .visitors-count-fixed .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+            flex-shrink: 0;
+        }
+        
+        @keyframes pulse-dot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+        
+        /* ===== FILTER/SORT SECTION ===== */
+        .filter-sort-section {
+            margin-bottom: var(--spacing-xl);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: 0 var(--spacing-md);
+        }
+        
+        .filter-sort-section label {
+            font-weight: 600;
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+        
+        .filter-sort-section select {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--gray-300);
+            background: white;
+            font-size: 0.875rem;
+            color: var(--gray-800);
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease;
+            min-width: 180px;
+        }
+        
+        .filter-sort-section select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .filter-sort-section select:hover {
+            border-color: var(--gray-400);
+        }
+        
+        /* ===== HOTEL CARDS ===== */
+        .hotel-listings {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xl);
+        }
+        
+        .hotel-card {
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .hotel-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--gray-300);
+        }
+        
+        .hotel-card.expired-hidden {
+            opacity: 0;
+            pointer-events: none;
+            height: 0;
+            margin-bottom: 0;
+            padding: 0;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+        
+        .hotel-card.deal-missed .missed-overlay {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .missed-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: var(--radius-lg);
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+        
+        /* ===== CAROUSEL ===== */
+        .carousel-container {
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+            position: relative;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            flex-shrink: 0;
+        }
+        
+        .carousel-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.5s ease-in-out;
+        }
+        
+        .carousel-track img {
+            min-width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .carousel-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            padding: var(--spacing-sm);
+            cursor: pointer;
+            font-size: 1.5rem;
+            border-radius: 50%;
+            z-index: 10;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            backdrop-filter: blur(4px);
+        }
+        
+        .carousel-button:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .carousel-button:focus {
+            outline: 2px solid white;
+            outline-offset: 2px;
+        }
+        
+        .carousel-button.prev { left: var(--spacing-md); }
+        .carousel-button.next { right: var(--spacing-md); }
+        
+        /* ===== CARD CONTENT ===== */
+        .card-content {
+            padding: var(--spacing-lg);
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        
+        .hotel-info {
+            flex-grow: 1;
+        }
+        
+        .hotel-name {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0 0 var(--spacing-xs) 0;
+            line-height: 1.2;
+        }
+        
+        .hotel-location {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin-bottom: var(--spacing-md);
+            font-weight: 500;
+        }
+        
+        .hotel-description {
+            color: var(--gray-600);
+            margin-bottom: var(--spacing-md);
+            line-height: 1.6;
+        }
+        
+        .star-rating {
+            font-size: 1.125rem;
+            color: var(--accent-amber);
+            margin-bottom: var(--spacing-lg);
+            letter-spacing: 1px;
+        }
+        
+        /* ===== PRICING & ACTIONS ===== */
+        .card-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-top: auto;
+        }
+        
+        .blurred-price-svg {
+            width: 120px;
+            height: 50px;
+            overflow: visible;
+        }
+        
+        .blurred-price-svg text {
+            font-family: 'Inter', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            fill: var(--gray-700);
+            user-select: none;
+            dominant-baseline: central;
+            text-anchor: middle;
+        }
+        
+        .reveal-button {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-cyan) 100%);
+            color: white;
+            padding: var(--spacing-md) var(--spacing-xl);
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+            min-width: 160px;
+        }
+        
+        .reveal-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .reveal-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .reveal-button:hover::before {
+            left: 100%;
+        }
+        
+        .reveal-button:focus {
+            outline: 2px solid var(--accent-cyan);
+            outline-offset: 2px;
+        }
+        
+        .reveal-button.disabled-button {
+            background: var(--gray-400);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        
+        .reveal-button.disabled-button:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* ===== BADGES & TIMERS ===== */
+        .deal-badge {
+            position: absolute;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            background: linear-gradient(135deg, var(--accent-amber) 0%, var(--warning-orange) 100%);
+            color: white;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            box-shadow: var(--shadow-md);
+            animation: pulse-badge 2s infinite;
+            z-index: 11;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        @keyframes pulse-badge {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .countdown-timer {
+            position: absolute;
+            top: var(--spacing-md);
+            left: var(--spacing-md);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            background: rgba(239, 68, 68, 0.9);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            z-index: 10;
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .countdown-timer.expired {
+            color: var(--gray-400);
+            background: rgba(229, 231, 235, 0.9);
+        }
+        
+        /* ===== TESTIMONIALS SECTION ===== */
+        .testimonials-section {
+            background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-2xl);
+            margin-top: var(--spacing-2xl);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .testimonials-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+        }
+        
+        .testimonial-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            color: var(--gray-600);
+            margin-bottom: var(--spacing-md);
+            line-height: 1.6;
+        }
+        
+        .testimonial-author {
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            margin-top: var(--spacing-2xl);
+            padding-top: var(--spacing-xl);
+            color: var(--gray-500);
+            font-size: 0.875rem;
+            border-top: 1px solid var(--gray-200);
+        }
+        
+        .footer a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer a:hover {
+            color: var(--primary-blue-dark);
+            text-decoration: underline;
+        }
+        
+        /* ===== MESSAGE BOX ===== */
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            z-index: 1000;
+            display: none;
+            text-align: center;
+            max-width: 400px;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .message-box button {
+            background: var(--primary-blue);
+            color: white;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border: none;
+            border-radius: var(--radius-md);
+            margin-top: var(--spacing-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .message-box button:hover {
+            background: var(--primary-blue-dark);
+            transform: translateY(-1px);
+        }
+        
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (min-width: 768px) {
+            .hotel-card {
+                flex-direction: row;
+                align-items: stretch;
+            }
+            
+            .carousel-container {
+                width: 40%;
+                height: auto;
+                border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+            }
+            
+            .card-content {
+                width: 60%;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .card-actions {
+                align-items: flex-end;
+                margin-left: auto;
+                min-width: 180px;
+            }
+            
+            .visitors-count-fixed {
+                font-size: 0.875rem;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .container {
+                padding: var(--spacing-sm);
+            }
+            
+            .content-wrapper {
+                padding: var(--spacing-lg);
+            }
+            
+            .navbar {
+                padding: var(--spacing-md);
+                flex-direction: column;
+                gap: var(--spacing-md);
+                text-align: center;
+            }
+            
+            .nav-links {
+                gap: var(--spacing-md);
+            }
+            
+            .filter-sort-section {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .visitors-count-fixed {
+                position: static;
+                margin-bottom: var(--spacing-md);
+                justify-content: center;
+            }
+            
+            .hotel-name {
+                font-size: 1.5rem;
+            }
+            
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* ===== ACCESSIBILITY ===== */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        /* Focus styles for better accessibility */
+        *:focus {
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
+        }
+        
+        button:focus,
+        select:focus,
+        a:focus {
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <main class="main-content">
+            <!-- Navigation Bar -->
+            <nav class="navbar" role="navigation" aria-label="Main navigation">
+                <a href="#" class="site-title" aria-label="VegasDeals.com homepage">VegasDeals.com</a>
+                <div class="nav-links">
+                    <a href="#" aria-label="Home page">Home</a>
+                    <a href="#" aria-label="About us">About</a>
+                    <a href="#" aria-label="Contact information">Contact</a>
+                </div>
+            </nav>
+
+            <div class="content-wrapper">
+                <!-- Active Deals Count -->
+                <div class="text-center mb-4">
+                    <span class="active-deals-count" id="activeDealsCount" aria-live="polite">
+                        6 Active Deals in Las Vegas!
+                    </span>
+                </div>
+
+                <!-- Visitors Count (Fixed Position) -->
+                <div class="visitors-count-fixed" id="visitorsCount" aria-live="polite">
+                    <span class="dot" aria-hidden="true"></span>
+                    <span class="visitors-text"></span>
+                </div>
+
+                <!-- Filter/Sort Section -->
+                <div class="filter-sort-section">
+                    <label for="sort-by">Sort by:</label>
+                    <select id="sort-by" aria-label="Sort hotel deals">
+                        <option value="default">Recommended</option>
+                        <option value="alpha-asc">Name (A-Z)</option>
+                        <option value="alpha-desc">Name (Z-A)</option>
+                        <option value="time-asc">Time Remaining (Soonest)</option>
+                        <option value="time-desc">Time Remaining (Longest)</option>
+                        <option value="stars-desc">Star Rating (High to Low)</option>
+                        <option value="stars-asc">Star Rating (Low to High)</option>
+                        <option value="deals-desc">Deals Left (Most to Least)</option>
+                        <option value="deals-asc">Deals Left (Least to Most)</option>
+                    </select>
+                </div>
+
+                <!-- Hotel Listings -->
+                <section class="hotel-listings" id="hotel-listings" aria-label="Available hotel deals">
+                    <!-- Hotel cards will be dynamically inserted here -->
+                </section>
+
+                <!-- Testimonials Section -->
+                <section class="testimonials-section" aria-labelledby="testimonials-title">
+                    <h2 class="testimonials-title" id="testimonials-title">What Our Guests Say</h2>
+                    <div class="testimonials-grid">
+                        <div class="testimonial-card">
+                            <p class="testimonial-text">"I found an amazing deal on a luxury suite that I never would have found otherwise! This site is a game-changer for last-minute trips."</p>
+                            <div class="testimonial-author">- Jessica L., New York</div>
+                        </div>
+                        <div class="testimonial-card">
+                            <p class="testimonial-text">"So easy to use and the 'Reveal Deals' button adds such a fun, mysterious touch. Got a fantastic rate for my Vegas getaway!"</p>
+                            <div class="testimonial-author">- Mark T., California</div>
+                        </div>
+                        <div class="testimonial-card">
+                            <p class="testimonial-text">"Was skeptical at first, but the deal was real and the booking process was seamless. Highly recommend for spontaneous travelers!"</p>
+                            <div class="testimonial-author">- Sarah P., Texas</div>
+                        </div>
+                        <div class="testimonial-card">
+                            <p class="testimonial-text">"The blurred prices really build anticipation! It felt like I was unlocking a secret discount. Great concept!"</p>
+                            <div class="testimonial-author">- David R., Florida</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Footer -->
+                <footer class="footer">
+                    <p>&copy; 2025 VegasDeals.com. All rights reserved. | 
+                       <a href="#" aria-label="Privacy Policy">Privacy Policy</a>
+                    </p>
+                </footer>
+            </div>
+        </main>
+    </div>
+
+    <!-- Message Box -->
+    <div id="messageBox" class="message-box" role="dialog" aria-labelledby="messageText" aria-hidden="true">
+        <p id="messageText"></p>
+        <button id="closeMessageBox" aria-label="Close message">OK</button>
+    </div>
+
+    <script>
+        // Hotel data with improved structure
+        const masterHotelList = [
+            {
+                id: "cosmopolitan",
+                name: "The Cosmopolitan",
+                location: "Las Vegas Strip",
+                description: "Experience luxury and vibrant nightlife at this iconic resort on the Las Vegas Strip, featuring unique dining, a world-class casino, and stunning views.",
+                stars: 5,
+                images: [
+                    "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=350&fit=crop",
+                    "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&h=350&fit=crop",
+                    "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=350&fit=crop"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/the-cosmopolitan-of-las-vegas.html?aid=123456"
+            },
+            {
+                id: "bellagio",
+                name: "Bellagio",
+                location: "Las Vegas Strip",
+                description: "Indulge in timeless elegance at the Bellagio, famous for its dancing fountains, fine art gallery, and exquisite botanical gardens.",
+                stars: 5,
+                images: [
+                    "https://images.unsplash.com/photo-1520637836862-4d197d17c90a?w=600&h=350&fit=crop",
+                    "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&h=350&fit=crop",
+                    "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=350&fit=crop"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/bellagio.html?aid=123456"
+            },
+            {
+                id: "caesars",
+                name: "Caesars Palace",
+                location: "Las Vegas Strip",
+                description: "Step into ancient Rome with modern luxury. Caesars Palace offers world-class entertainment, diverse dining, and opulent accommodations.",
+                stars: 5,
+                images: [
+                    "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=350&fit=crop",
+                    "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&h=350&fit=crop",
+                    "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=350&fit=crop"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/caesars-palace.html?aid=123456"
+            },
+            {
+                id: "venetian",
+                name: "The Venetian Resort",
+                location: "Las Vegas Strip",
+                description: "Experience the romance of Venice with gondola rides, stunning architecture, and an expansive array of shops and restaurants.",
+                stars: 5,
+                images: [
+                    "https://images.unsplash.com/photo-1520637836862-4d197d17c90a?w=600&h=350&fit=crop",
+                    "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&h=350&fit=crop",
+                    "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=350&fit=crop"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/the-venetian-resort-las-vegas.html?aid=123456"
+            },
+            {
+                id: "wynn",
+                name: "Wynn Las Vegas",
+                location: "Las Vegas Strip",
+                description: "A beacon of luxury and elegance, the Wynn offers exquisite dining, a championship golf course, and a serene spa experience.",
+                stars: 5,
+                images: [
+                    "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=350&fit=crop",
+                    "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&h=350&fit=crop",
+                    "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=350&fit=crop"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/wynn-las-vegas.html?aid=123456"
+            },
+            {
+                id: "mgmgrand",
+                name: "MGM Grand",
+                location: "Las Vegas Strip",
+                description: "The 'City of Entertainment' offers a massive casino, thrilling shows, and a variety of dining and nightlife options for every taste.",
+                stars: 4,
+                images: [
+                    "https://images.unsplash.com/photo-1520637836862-4d197d17c90a?w=600&h=350&fit=crop",
+                    "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&h=350&fit=crop",
+                    "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=350&fit=crop"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/mgm-grand.html?aid=123456"
+            },
+            {
+                id: "aria",
+                name: "ARIA Resort & Casino",
+                location: "Las Vegas Strip",
+                description: "Modern luxury and sustainable design meet vibrant entertainment and dining at the heart of CityCenter.",
+                stars: 5,
+                images: [
+                    "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=350&fit=crop",
+                    "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&h=350&fit=crop",
+                    "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=350&fit=crop"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/aria-resort-casino.html?aid=123456"
+            },
+            {
+                id: "mandalaybay",
+                name: "Mandalay Bay",
+                location: "Las Vegas Strip",
+                description: "A tropical oasis with an 11-acre beach, wave pool, and shark reef aquarium, offering a unique resort experience.",
+                stars: 4,
+                images: [
+                    "https://images.unsplash.com/photo-1520637836862-4d197d17c90a?w=600&h=350&fit=crop",
+                    "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&h=350&fit=crop",
+                    "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=350&fit=crop"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/mandalay-bay-resort-casino.html?aid=123456"
+            }
+        ];
+
+        // Utility functions
+        function showMessageBox(message) {
+            const messageBox = document.getElementById('messageBox');
+            const messageText = document.getElementById('messageText');
+            messageText.textContent = message;
+            messageBox.style.display = 'block';
+            messageBox.setAttribute('aria-hidden', 'false');
+            document.getElementById('closeMessageBox').focus();
+        }
+
+        function hideMessageBox() {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.style.display = 'none';
+            messageBox.setAttribute('aria-hidden', 'true');
+        }
+
+        function getRandomEndTime() {
+            const now = new Date();
+            const futureTime = new Date(now.getTime() + 120 * 1000 + Math.random() * 3 * 60 * 60 * 1000);
+            return futureTime.toISOString();
+        }
+
+        function getRandomBlurredPrice() {
+            const price = Math.floor(Math.random() * (400 - 100 + 1)) + 100;
+            return `$${price}`;
+        }
+
+        function createHotelCardElement(hotel) {
+            const hotelCard = document.createElement('article');
+            hotelCard.classList.add('hotel-card');
+            hotelCard.id = `hotel-${hotel.id}`;
+            hotelCard.setAttribute('aria-labelledby', `hotel-name-${hotel.id}`);
+
+            const starSpans = Array(hotel.stars).fill('<span aria-hidden="true">★</span>').join('');
+
+            hotelCard.innerHTML = `
+                <div class="missed-overlay" aria-hidden="true">
+                    <div>Deal Expired</div>
+                </div>
+                <span class="deal-badge" data-hotel-id="${hotel.id}" aria-live="polite"></span>
+                <div class="carousel-container" id="${hotel.id}-carousel" role="img" aria-label="${hotel.name} image gallery">
+                    <span class="countdown-timer" data-end-time="${getRandomEndTime()}" aria-live="polite"></span>
+                    <div class="carousel-track">
+                        ${hotel.images.map((imgSrc, index) => `
+                            <img src="${imgSrc}" 
+                                 onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=350&fit=crop';" 
+                                 alt="${hotel.name} - Image ${index + 1}"
+                                 loading="lazy">
+                        `).join('')}
+                    </div>
+                    <button class="carousel-button prev" aria-label="Previous image" type="button">‹</button>
+                    <button class="carousel-button next" aria-label="Next image" type="button">›</button>
+                </div>
+                <div class="card-content">
+                    <div class="hotel-info">
+                        <h2 class="hotel-name" id="hotel-name-${hotel.id}">${hotel.name}</h2>
+                        <p class="hotel-location">${hotel.location}</p>
+                        <p class="hotel-description">${hotel.description}</p>
+                        <div class="star-rating" aria-label="${hotel.stars} star rating">
+                            ${starSpans}
+                            <span class="sr-only">${hotel.stars} out of 5 stars</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <svg class="blurred-price-svg" viewBox="0 0 120 50" aria-hidden="true">
+                            <defs>
+                                <filter id="blurFilter-${hotel.id}">
+                                    <feGaussianBlur in="SourceGraphic" stdDeviation="8" />
+                                </filter>
+                            </defs>
+                            <text x="60" y="25" filter="url(#blurFilter-${hotel.id})">${getRandomBlurredPrice()}</text>
+                        </svg>
+                        <button class="reveal-button" 
+                                data-affiliate-link="${hotel.affiliateLink}"
+                                aria-describedby="hotel-name-${hotel.id}"
+                                type="button">
+                            Reveal Deals
+                        </button>
+                    </div>
+                </div>
+            `;
+            return hotelCard;
+        }
+
+        function initializeCardDynamics(cardElement) {
+            // Initialize carousel
+            const carouselContainer = cardElement.querySelector('.carousel-container');
+            if (carouselContainer) {
+                const track = carouselContainer.querySelector('.carousel-track');
+                const slides = Array.from(track.querySelectorAll('img'));
+                const nextButton = carouselContainer.querySelector('.carousel-button.next');
+                const prevButton = carouselContainer.querySelector('.carousel-button.prev');
+                let currentIndex = 0;
+
+                const updateCarousel = () => {
+                    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                    
+                    // Update aria-label for accessibility
+                    const currentImg = slides[currentIndex];
+                    if (currentImg) {
+                        carouselContainer.setAttribute('aria-label', 
+                            `${currentImg.alt} - Image ${currentIndex + 1} of ${slides.length}`);
+                    }
+                };
+
+                nextButton.addEventListener('click', () => {
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    updateCarousel();
+                });
+
+                prevButton.addEventListener('click', () => {
+                    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+                    updateCarousel();
+                });
+
+                // Auto-advance carousel
+                if (carouselContainer.dataset.intervalId) {
+                    clearInterval(parseInt(carouselContainer.dataset.intervalId));
+                }
+                const newIntervalId = setInterval(() => {
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    updateCarousel();
+                }, 5000);
+                carouselContainer.dataset.intervalId = newIntervalId.toString();
+                
+                updateCarousel();
+            }
+
+            // Initialize countdown timer
+            const timerElement = cardElement.querySelector('.countdown-timer');
+            if (timerElement && !timerElement.dataset.endTime) {
+                timerElement.dataset.endTime = getRandomEndTime();
+            }
+
+            // Initialize deals left badge
+            const badgeElement = cardElement.querySelector('.deal-badge');
+            if (badgeElement) {
+                let initialDeals = Math.floor(Math.random() * 12) + 1;
+                if (initialDeals > 5 && Math.random() < 0.6) {
+                    initialDeals = Math.floor(Math.random() * 4) + 1;
+                }
+                badgeElement.dataset.dealsLeft = initialDeals.toString();
+                badgeElement.textContent = `⚡ ${initialDeals} Left!`;
+            }
+
+            // Attach reveal button listener
+            const revealButton = cardElement.querySelector('.reveal-button');
+            if (revealButton) {
+                revealButton.addEventListener('click', () => {
+                    const affiliateLink = revealButton.dataset.affiliateLink;
+                    if (affiliateLink) {
+                        window.location.href = affiliateLink;
+                    } else {
+                        showMessageBox('Oops! Deal link not available at this moment. Please try another.');
+                    }
+                });
+            }
+        }
+
+        // Timer and deal management
+        let lastDealRemovedTime = Date.now();
+        const hotelListingsSection = document.getElementById('hotel-listings');
+        const activeDealsCountElement = document.getElementById('activeDealsCount');
+
+        function updateCountdownForElement(timerElement) {
+            if (timerElement.dataset.expired === 'true') return;
+
+            const endTime = new Date(timerElement.dataset.endTime).getTime();
+            const now = Date.now();
+            const distance = endTime - now;
+            const hotelCard = timerElement.closest('.hotel-card');
+            const revealButton = hotelCard?.querySelector('.reveal-button');
+
+            if (distance < 0) {
+                timerElement.dataset.expired = 'true';
+                timerElement.innerHTML = "Deal Expired!";
+                timerElement.classList.add('expired');
+                
+                if (hotelCard && !hotelCard.classList.contains('deal-missed')) {
+                    hotelCard.classList.add('deal-missed');
+                    if (revealButton) {
+                        revealButton.disabled = true;
+                        revealButton.classList.add('disabled-button');
+                        revealButton.setAttribute('aria-disabled', 'true');
+                    }
+                }
+            } else {
+                const hours = Math.floor(distance / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                timerElement.innerHTML = `Ends in: ${hours}h ${minutes}m ${seconds}s`;
+            }
+        }
+
+        function addNewDeal() {
+            const currentDisplayedIds = Array.from(document.querySelectorAll('.hotel-card:not(.expired-hidden)'))
+                .map(card => card.id.replace('hotel-', ''));
+
+            let potentialNewHotels = masterHotelList.filter(hotel =>
+                !currentDisplayedIds.includes(hotel.id)
+            );
+
+            if (potentialNewHotels.length === 0) {
+                potentialNewHotels = [...masterHotelList];
+                potentialNewHotels = potentialNewHotels.filter(hotel =>
+                    !currentDisplayedIds.includes(hotel.id)
+                );
+            }
+
+            if (potentialNewHotels.length === 0) return null;
+
+            const randomIndex = Math.floor(Math.random() * potentialNewHotels.length);
+            const newHotelData = potentialNewHotels[randomIndex];
+            const newHotelCard = createHotelCardElement(newHotelData);
+            
+            hotelListingsSection.appendChild(newHotelCard);
+            initializeCardDynamics(newHotelCard);
+            
+            return newHotelData.id;
+        }
+
+        function manageActiveDeals() {
+            const hotelCards = document.querySelectorAll('.hotel-card:not(.deal-missed):not(.expired-hidden)');
+            let currentActiveDeals = hotelCards.length;
+            activeDealsCountElement.textContent = `${currentActiveDeals} Active Deals in Las Vegas!`;
+
+            const minDeals = 5;
+            while (currentActiveDeals < minDeals) {
+                const addedId = addNewDeal();
+                if (addedId) {
+                    currentActiveDeals++;
+                } else {
+                    break;
+                }
+            }
+            activeDealsCountElement.textContent = `${currentActiveDeals} Active Deals in Las Vegas!`;
+        }
+
+        function processExpiredDealsQueue() {
+            const now = Date.now();
+            const timeSinceLastRemoval = now - lastDealRemovedTime;
+            const minTimeBetweenRemovals = 90 * 1000;
+
+            if (timeSinceLastRemoval >= minTimeBetweenRemovals) {
+                const expiredCards = document.querySelectorAll('.hotel-card.deal-missed:not(.expired-hidden)');
+                if (expiredCards.length > 0) {
+                    const cardToRemove = expiredCards[0];
+                    cardToRemove.classList.add('expired-hidden');
+                    cardToRemove.setAttribute('aria-hidden', 'true');
+
+                    setTimeout(() => {
+                        if (cardToRemove.parentNode) {
+                            cardToRemove.remove();
+                            lastDealRemovedTime = Date.now();
+                            manageActiveDeals();
+                        }
+                    }, 500);
+                }
+            }
+        }
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', () => {
+            const closeMessageBoxButton = document.getElementById('closeMessageBox');
+            const sortBySelect = document.getElementById('sort-by');
+
+            // Message box event listeners
+            closeMessageBoxButton?.addEventListener('click', hideMessageBox);
+            
+            // Keyboard support for message box
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && document.getElementById('messageBox').style.display === 'block') {
+                    hideMessageBox();
+                }
+            });
+
+            // Initial population of deals
+            const initialDealCount = Math.floor(Math.random() * 4) + 5; // 5-8 deals
+            for (let i = 0; i < initialDealCount; i++) {
+                const addedId = addNewDeal();
+                if (!addedId) break;
+            }
+
+            // Remove any expired deals on load
+            document.querySelectorAll('.hotel-card').forEach(card => {
+                const timerElement = card.querySelector('.countdown-timer');
+                const dealsLeftBadge = card.querySelector('.deal-badge');
+                const dealsLeft = dealsLeftBadge ? parseInt(dealsLeftBadge.dataset.dealsLeft) : 1;
+                const endTime = new Date(timerElement.dataset.endTime).getTime();
+                const now = Date.now();
+
+                if (endTime < now || dealsLeft === 0) {
+                    card.remove();
+                }
+            });
+
+            manageActiveDeals();
+
+            // Set up intervals
+            setInterval(() => {
+                document.querySelectorAll('.countdown-timer').forEach(updateCountdownForElement);
+            }, 1000);
+
+            setInterval(processExpiredDealsQueue, 5000);
+
+            // Update deals left
+            function updateDealsLeft() {
+                document.querySelectorAll('.deal-badge').forEach(badge => {
+                    let currentDeals = parseInt(badge.dataset.dealsLeft);
+                    const hotelCard = badge.closest('.hotel-card');
+                    const revealButton = hotelCard?.querySelector('.reveal-button');
+                    const timerElement = hotelCard?.querySelector('.countdown-timer');
+
+                    if (hotelCard && !hotelCard.classList.contains('deal-missed') && currentDeals > 0) {
+                        currentDeals--;
+                        badge.dataset.dealsLeft = currentDeals.toString();
+                    }
+
+                    if (currentDeals === 0) {
+                        badge.textContent = 'Sold Out!';
+                        if (hotelCard && !hotelCard.classList.contains('deal-missed')) {
+                            hotelCard.classList.add('deal-missed');
+                            if (revealButton) {
+                                revealButton.disabled = true;
+                                revealButton.classList.add('disabled-button');
+                                revealButton.setAttribute('aria-disabled', 'true');
+                            }
+                            if (timerElement) {
+                                timerElement.dataset.expired = 'true';
+                                timerElement.innerHTML = "Deal Expired!";
+                                timerElement.classList.add('expired');
+                            }
+                        }
+                    } else {
+                        badge.textContent = `⚡ ${currentDeals} Left!`;
+                    }
+                });
+
+                const randomDelay = Math.floor(Math.random() * 20000) + 20000; // 20-40 seconds
+                setTimeout(updateDealsLeft, randomDelay);
+            }
+            updateDealsLeft();
+
+            // Visitors count
+            let currentVisitors = Math.floor(Math.random() * 93) + 15; // 15-107
+            const visitorsCountElement = document.getElementById('visitorsCount');
+            const visitorsCountTextSpan = visitorsCountElement.querySelector('.visitors-text');
+
+            function updateVisitorsCount() {
+                const change = Math.floor(Math.random() * 2) + 1;
+                const direction = Math.random() < 0.5 ? 1 : -1;
+                currentVisitors += change * direction;
+
+                currentVisitors = Math.max(15, Math.min(107, currentVisitors));
+                visitorsCountTextSpan.textContent = `${currentVisitors} other visitors currently viewing deals!`;
+            }
+
+            function setRandomIntervalForVisitors() {
+                const randomInterval = Math.floor(Math.random() * 2000) + 3000; // 3-5 seconds
+                setTimeout(() => {
+                    updateVisitorsCount();
+                    setRandomIntervalForVisitors();
+                }, randomInterval);
+            }
+
+            updateVisitorsCount();
+            setRandomIntervalForVisitors();
+
+            // Scroll behavior for visitors count
+            let hasScrolledDown = false;
+            let hasScrolledUp = true;
+            const visitorsInitialTop = 20;
+            let visitorsBottomTarget = 0;
+
+            function calculateVisitorsBottomTarget() {
+                const visitorsHeight = visitorsCountElement.offsetHeight;
+                visitorsBottomTarget = window.innerHeight - visitorsHeight - 20;
+                if (!hasScrolledDown && hasScrolledUp) {
+                    visitorsCountElement.style.top = `${visitorsInitialTop}px`;
+                }
+            }
+
+            calculateVisitorsBottomTarget();
+            window.addEventListener('resize', calculateVisitorsBottomTarget);
+
+            window.addEventListener('scroll', () => {
+                const scrollY = window.scrollY;
+
+                if (scrollY > 50 && !hasScrolledDown) {
+                    visitorsCountElement.style.top = `${visitorsBottomTarget}px`;
+                    hasScrolledDown = true;
+                    hasScrolledUp = false;
+                } else if (scrollY < 50 && !hasScrolledUp) {
+                    visitorsCountElement.style.top = `${visitorsInitialTop}px`;
+                    hasScrolledUp = true;
+                    hasScrolledDown = false;
+                }
+            });
+
+            // Sorting functionality
+            sortBySelect?.addEventListener('change', (event) => {
+                const sortType = event.target.value;
+                const hotelCards = Array.from(document.querySelectorAll('.hotel-card:not(.expired-hidden)'));
+
+                hotelCards.sort((a, b) => {
+                    switch (sortType) {
+                        case 'alpha-asc':
+                            return a.querySelector('h2').textContent.localeCompare(b.querySelector('h2').textContent);
+                        case 'alpha-desc':
+                            return b.querySelector('h2').textContent.localeCompare(a.querySelector('h2').textContent);
+                        case 'time-asc':
+                            return new Date(a.querySelector('.countdown-timer').dataset.endTime) - 
+                                   new Date(b.querySelector('.countdown-timer').dataset.endTime);
+                        case 'time-desc':
+                            return new Date(b.querySelector('.countdown-timer').dataset.endTime) - 
+                                   new Date(a.querySelector('.countdown-timer').dataset.endTime);
+                        case 'stars-desc':
+                            return b.querySelectorAll('.star-rating span').length - 
+                                   a.querySelectorAll('.star-rating span').length;
+                        case 'stars-asc':
+                            return a.querySelectorAll('.star-rating span').length - 
+                                   b.querySelectorAll('.star-rating span').length;
+                        case 'deals-desc':
+                            return parseInt(b.querySelector('.deal-badge').dataset.dealsLeft) - 
+                                   parseInt(a.querySelector('.deal-badge').dataset.dealsLeft);
+                        case 'deals-asc':
+                            return parseInt(a.querySelector('.deal-badge').dataset.dealsLeft) - 
+                                   parseInt(b.querySelector('.deal-badge').dataset.dealsLeft);
+                        default:
+                            return 0;
+                    }
+                });
+
+                hotelCards.forEach(card => hotelListingsSection.appendChild(card));
+            });
+        });
+    </script>
+</body>
+</html>
+

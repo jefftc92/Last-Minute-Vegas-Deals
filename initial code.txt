@@ -1,0 +1,2809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Last Minute Las Vegas Hotel Deals</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for a modern look */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light gray background */
+        }
+        /* Basic styling for the container to center content */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        /* Style for the "Reveal Deals" button - more mystical and desirable */
+        .reveal-button {
+            /* Changed gradient to a vibrant blue/cyan */
+            background-image: linear-gradient(to right, #007bff 0%, #00c6ff 51%, #007bff 100%);
+            margin: 10px auto; /* Center button */
+            padding: 0.75rem 2rem;
+            text-align: center;
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Initial shadow */
+            border-radius: 0.5rem;
+            display: block; /* Make it a block element to take full width */
+            font-weight: 700; /* Bolder text */
+            letter-spacing: 0.05em; /* Slightly spaced letters */
+            width: fit-content; /* Adjust width to content */
+            animation: button-pulse-shadow 2s infinite ease-in-out; /* Subtle shadow pulse animation */
+        }
+        .reveal-button:hover {
+            background-position: right center; /* change the direction of the change on hover */
+            color: #fff;
+            text-decoration: none;
+            transform: translateY(-3px); /* Slightly more pronounced lift effect */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Stronger shadow on hover */
+            animation: none; /* Stop pulse animation on hover */
+        }
+        .reveal-button.disabled-button {
+            background-image: none; /* Remove gradient */
+            background-color: #a0aec0; /* Grey background */
+            cursor: not-allowed;
+            box-shadow: none;
+            animation: none; /* No animation when disabled */
+            transform: translateY(0); /* Ensure no lift */
+        }
+        .reveal-button.disabled-button:hover {
+            background-color: #a0aec0; /* Keep grey on hover */
+            transform: translateY(0); /* No lift on hover */
+            box-shadow: none;
+        }
+
+
+        /* Keyframes for subtle button shadow pulse animation */
+        @keyframes button-pulse-shadow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); }
+            50% { box-shadow: 0 0 30px rgba(0, 198, 255, 0.4); } /* Pulse with a hint of the new gradient color (blue/cyan) */
+        }
+
+        /* Hotel card adjustments for Expedia-like list layout */
+        .hotel-card {
+            display: flex; /* Use flexbox for horizontal layout */
+            flex-direction: column; /* Default to column for small screens */
+            align-items: center; /* Center items for column layout */
+            margin-bottom: 2.5rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.5s ease-out; /* Added opacity transition */
+            position: relative;
+            background-color: #fff;
+        }
+        .hotel-card.expired-hidden {
+            opacity: 0;
+            pointer-events: none; /* Prevent interaction when fading out */
+            height: 0; /* Collapse height */
+            margin-bottom: 0; /* Remove margin */
+            padding-top: 0;
+            padding-bottom: 0;
+            overflow: hidden; /* Hide content during collapse */
+            transition: opacity 0.5s ease-out, height 0.5s ease-out, margin-bottom 0.5s ease-out, padding 0.5s ease-out;
+        }
+
+        /* Missed Deal Overlay Styling */
+        .hotel-card.deal-missed .missed-overlay {
+            opacity: 1;
+            pointer-events: auto; /* Allow overlay to block clicks */
+        }
+        .missed-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* Softer opaque dark overlay */
+            color: white;
+            display: flex;
+            flex-direction: column; /* Stack text and emoji */
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem; /* Slightly smaller text */
+            font-weight: 700; /* Less bold */
+            text-transform: uppercase;
+            border-radius: 0.75rem; /* Match card border-radius */
+            z-index: 20; /* Above all other card content */
+            opacity: 0; /* Hidden by default */
+            transition: opacity 0.3s ease-in-out;
+            text-shadow: none; /* Removed text-shadow */
+        }
+        .missed-overlay .emoji {
+            font-size: 3.5rem; /* Slightly smaller emoji */
+            margin-bottom: 0.5rem;
+        }
+
+
+        @media (min-width: 768px) { /* Apply horizontal layout for medium screens and up */
+            .hotel-card {
+                flex-direction: row; /* Horizontal layout */
+                align-items: flex-start; /* Align items to the top */
+                text-align: left; /* Align text to left */
+            }
+            .hotel-card .content {
+                text-align: left; /* Ensure text is left-aligned in row layout */
+                flex-grow: 1; /* Allow content to take available space */
+                padding-left: 1.5rem; /* Space between image and content */
+            }
+            .hotel-card .actions {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end; /* Align buttons to the right */
+                justify-content: space-between;
+                padding-left: 1.5rem;
+                min-width: 150px; /* Give actions column a min-width */
+            }
+            .reveal-button {
+                margin-left: auto; /* Push button to the right */
+                margin-right: 0;
+            }
+        }
+
+        /* Carousel Styling */
+        .carousel-container {
+            width: 100%;
+            max-width: 500px; /* Max width for carousel in column layout */
+            height: 250px;
+            overflow: hidden;
+            position: relative; /* Needed for absolute positioning of timer */
+            border-radius: 0.5rem;
+            margin-bottom: 1rem; /* Margin for column layout */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0; /* Prevent shrinking in row layout */
+        }
+        @media (min-width: 768px) {
+            .carousel-container {
+                width: 40%; /* Take 40% of the card width in row layout */
+                max-width: none; /* Remove max-width constraint */
+                margin-bottom: 0; /* No bottom margin in row layout */
+            }
+        }
+
+        .carousel-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-track img {
+            min-width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0.5rem;
+        }
+
+        .carousel-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 1.8rem;
+            border-radius: 50%;
+            z-index: 10;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+        .carousel-button:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+            transform: translateY(-50%) scale(1.1);
+        }
+        .carousel-button.prev {
+            left: 10px;
+        }
+        .carousel-button.next {
+            right: 10px;
+        }
+
+        /* Message Box Styling */
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none; /* Hidden by default */
+            text-align: center;
+            max-width: 300px;
+        }
+        .message-box button {
+            background-color: #ab20fd;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .message-box button:hover {
+            background-color: #6a0572;
+        }
+
+        /* Deal Badge Styling */
+        .deal-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #f59e0b; /* Amber color for "hot" deal */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px; /* Fully rounded */
+            font-weight: 700;
+            font-size: 0.875rem; /* text-sm */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            animation: pulse 1.5s infinite; /* Add pulse animation */
+            z-index: 11; /* Ensure badge is above timer if they overlap */
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Blurred Price Styling for SVG */
+        .blurred-price-svg {
+            display: block; /* Ensure it takes its own line */
+            width: 100px; /* Adjust width as needed for the blurred number */
+            height: 40px; /* Adjust height as needed */
+            margin-bottom: 0.5rem;
+            overflow: visible; /* Allow filter effects to extend */
+        }
+        .blurred-price-svg text {
+            font-family: 'Inter', sans-serif;
+            font-size: 2.25rem; /* text-4xl */
+            font-weight: 800; /* font-extrabold */
+            fill: #333; /* Text color */
+            user-select: none;
+            dominant-baseline: central; /* Vertically center text */
+            text-anchor: end; /* Align text to the right within its SVG space */
+        }
+
+        /* Credibility Section Styles */
+        .credibility-section {
+            background-color: #f8f8f8;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-top: 3rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .credibility-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .credibility-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .credibility-item svg {
+            color: #ab20fd; /* Purple icon color */
+            margin-bottom: 0.75rem;
+        }
+        .credibility-item h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 0.5rem;
+        }
+        .credibility-item p {
+            font-size: 0.95rem;
+            color: #666;
+        }
+        .testimonial-card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .testimonial-card p {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 1rem;
+        }
+        .testimonial-card .author {
+            font-weight: 600;
+            color: #333;
+        }
+        .how-it-works-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background-color: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .how-it-works-step .step-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ab20fd;
+            margin-bottom: 0.5rem;
+        }
+        .how-it-works-step h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .how-it-works-step p {
+            font-size: 0.95rem;
+            color: #666;
+        }
+        /* Navigation Bar Styling */
+        .navbar {
+            background-color: #1a202c; /* Dark background for a sleek look */
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 0.75rem 0.75rem 0 0; /* Rounded top corners */
+            margin-bottom: 2rem; /* Space below the navbar */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .navbar .site-title {
+            color: #ffffff;
+            font-size: 1.75rem; /* text-2xl */
+            font-weight: 800; /* font-extrabold */
+            text-decoration: none;
+        }
+        .navbar .nav-links a {
+            color: #a0aec0; /* Light gray for links */
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 1.5rem;
+            transition: color 0.3s ease;
+        }
+        .navbar .nav-links a:hover {
+            color: #ffffff; /* White on hover */
+        }
+
+        /* Active Deals Count Styling */
+        .active-deals-count {
+            text-align: center;
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 700;
+            color: #4a5568; /* Gray-700 */
+            margin-bottom: 2rem;
+            padding: 0.5rem 1rem;
+            background-color: #e2e8f0; /* Gray-200 */
+            border-radius: 0.5rem;
+            display: inline-block; /* To make padding effective */
+        }
+
+        /* Countdown Timer Styling */
+        .countdown-timer {
+            position: absolute; /* Position absolutely within carousel-container */
+            top: 10px; /* 10px from top */
+            left: 10px; /* 10px from left */
+            font-size: 0.9rem; /* Slightly smaller for corner placement */
+            font-weight: 600;
+            color: white; /* White text for contrast */
+            background-color: rgba(239, 68, 68, 0.9); /* Semi-transparent red */
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.25rem;
+            z-index: 10; /* Ensure it's above the image */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .countdown-timer.expired {
+            color: #9ca3af; /* Gray-400 */
+            background-color: rgba(229, 231, 235, 0.9); /* Gray-200 semi-transparent */
+        }
+
+        /* Star Rating Styling */
+        .star-rating {
+            font-size: 1.1rem;
+            color: #f59e0b; /* Amber color for stars */
+            margin-top: 0.5rem; /* Space above the stars */
+            margin-bottom: 0.5rem; /* Space below the stars */
+        }
+        .star-rating span {
+            margin-right: 0.1rem;
+        }
+
+        /* Hotel Location Styling */
+        .hotel-location {
+            font-size: 0.95rem;
+            color: #666;
+            margin-top: -0.25rem; /* Pull up slightly to be closer to title */
+            margin-bottom: 0.5rem;
+        }
+
+        /* Visitors Count Styling */
+        .visitors-count-fixed {
+            position: fixed; /* Fixed position */
+            right: 20px; /* From right */
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white background */
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-size: 1rem;
+            font-weight: 600;
+            color: #4a5568;
+            z-index: 100; /* Ensure it's above other content */
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: top 0.5s ease-in-out; /* Smooth transition for movement */
+            /* Initial position (top right) */
+            top: 20px;
+        }
+        /* Scrolled position (bottom right) */
+        .visitors-count-fixed.scrolled {
+            top: calc(100vh - var(--visitors-height) - 20px); /* Move to bottom */
+        }
+
+        .visitors-count-fixed .dot {
+            width: 10px;
+            height: 10px;
+            background-color: #007bff; /* Blue dot to match new button */
+            border-radius: 50%;
+            animation: pulse-dot 1.5s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Micro-copy for button */
+        .private-price-text {
+            font-size: 0.85rem;
+            color: #555;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+
+        /* Filter/Sort Section Styling */
+        .filter-sort-section {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: flex-end; /* Align to the right */
+            align-items: center;
+            gap: 1rem;
+            padding: 0 1rem; /* Add some horizontal padding */
+        }
+        .filter-sort-section label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .filter-sort-section select {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid #cbd5e0; /* Gray-300 */
+            background-color: #ffffff;
+            font-size: 0.95rem;
+            color: #2d3748; /* Gray-800 */
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .filter-sort-section select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <div class="container bg-white shadow-lg rounded-xl">
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <a href="#" class="site-title">VegasDeals.com</a>
+            <div class="nav-links">
+                <a href="#">Home</a>
+                <a href="#">About</a>
+                <a href="#">Contact</a>
+            </div>
+        </nav>
+
+        <div class="p-6 md:p-10"> <!-- Content wrapper to maintain padding after navbar -->
+
+            <!-- Active Deals Count -->
+            <div class="text-center mb-4">
+                <span class="active-deals-count" id="activeDealsCount">6 Active Deals in Las Vegas!</span>
+            </div>
+
+            <!-- Random Visitors Count (Fixed Position with Animation) -->
+            <div class="visitors-count-fixed" id="visitorsCount">
+                <span class="dot"></span>
+                <span class="visitors-text"></span>
+            </div>
+
+            <!-- Filter/Sort Section -->
+            <div class="filter-sort-section">
+                <label for="sort-by">Sort by:</label>
+                <select id="sort-by">
+                    <option value="default">Recommended</option>
+                    <option value="alpha-asc">Name (A-Z)</option>
+                    <option value="alpha-desc">Name (Z-A)</option>
+                    <option value="time-asc">Time Remaining (Soonest)</option>
+                    <option value="time-desc">Time Remaining (Longest)</option>
+                    <option value="stars-desc">Star Rating (High to Low)</option>
+                    <option value="stars-asc">Star Rating (Low to High)</option>
+                    <option value="deals-desc">Deals Left (Most to Least)</option>
+                    <option value="deals-asc">Deals Left (Least to Most)</option>
+                </select>
+            </div>
+
+            <!-- Hotel Listings List -->
+            <section class="flex flex-col gap-6" id="hotel-listings">
+
+                <!-- Hotel Card 1: The Cosmopolitan -->
+                <div class="hotel-card" id="hotel-cosmopolitan">
+                    <div class="missed-overlay">Deal Expired</div>
+                    <span class="deal-badge" data-hotel-id="cosmopolitan"></span>
+                    <div class="carousel-container" id="cosmopolitan-carousel">
+                        <span class="countdown-timer" data-end-time="2025-07-16T00:03:00Z"></span>
+                        <div class="carousel-track">
+                            <img src="https://bellagio.mgmresorts.com/content/dam/MGM/bellagio/hotel/bellagio-hotel-exterior-hero.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x350/a0c49d/ffffff?text=Cosmopolitan+Exterior';" alt="The Cosmopolitan Exterior">
+                            <img src="https://cosmopolitanlasvegas.mgmresorts.com/content/dam/MGM/cosmopolitan/amenities/boulevard-pool/cosmopolitan-boulevard-pool-daybeds.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x350/a0c49d/ffffff?text=Cosmopolitan+Pool';" alt="The Cosmopolitan Pool">
+                            <img src="https://cosmopolitanlasvegas.mgmresorts.com/content/dam/MGM/cosmopolitan/hotel/terrace-one-bedroom-suite/cosmopolitan-terrace-one-bedroom-suite-living-room.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x350/a0c49d/ffffff?text=Cosmopolitan+Room';" alt="The Cosmopolitan Room">
+                        </div>
+                        <button class="carousel-button prev">&#x2039;</button>
+                        <button class="carousel-button next">&#x203A;</button>
+                    </div>
+                    <div class="content flex flex-col justify-between h-full">
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-0">The Cosmopolitan</h2>
+                            <p class="hotel-location">Las Vegas Strip</p>
+                            <p class="text-gray-600 mb-2 text-sm">
+                                Experience luxury and vibrant nightlife at this iconic resort on the Las Vegas Strip,
+                                featuring unique dining, a world-class casino, and stunning views.
+                            </p>
+                            <div class="star-rating">
+                                <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span>
+                            </div>
+                        </div>
+                        <div class="actions mt-auto flex flex-col items-center md:items-end">
+                            <svg class="blurred-price-svg" viewBox="0 0 100 40">
+                                <defs>
+                                    <filter id="blurFilter">
+                                        <feGaussianBlur in="SourceGraphic" stdDeviation="8" />
+                                    </filter>
+                                </defs>
+                                <text x="95" y="20" filter="url(#blurFilter)">$289</text>
+                            </svg>
+                            <button class="reveal-button" data-affiliate-link="https://www.booking.com/hotel/us/the-cosmopolitan-of-las-vegas.html?aid=123456">
+                                Reveal Deals
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hotel Card 2: Bellagio -->
+                <div class="hotel-card" id="hotel-bellagio">
+                    <div class="missed-overlay">Deal Expired</div>
+                    <span class="deal-badge" data-hotel-id="bellagio"></span>
+                    <div class="carousel-container" id="bellagio-carousel">
+                        <span class="countdown-timer" data-end-time="2025-07-16T00:33:00Z"></span>
+                        <div class="carousel-track">
+                            <img src="https://bellagio.mgmresorts.com/content/dam/MGM/bellagio/hotel/bellagio-hotel-exterior-hero.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x350/b0d7e6/ffffff?text=Bellagio+Exterior';" alt="Bellagio Exterior">
+                            <img src="https://bellagio.mgmresorts.com/content/dam/MGM/bellagio/amenities/pool/bellagio-pool-cabanas-daybeds.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x350/b0d7e6/ffffff?text=Bellagio+Pool';" alt="Bellagio Pool">
+                            <img src="https://bellagio.mgmresorts.com/content/dam/MGM/bellagio/hotel/fountain-view-king/bellagio-fountain-view-king-room.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x350/b0d7e6/ffffff?text=Bellagio+Room';" alt="Bellagio Room">
+                        </div>
+                        <button class="carousel-button prev">&#x2039;</button>
+                        <button class="carousel-button next">&#x203A;</button>
+                    </div>
+                    <div class="content flex flex-col justify-between h-full">
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-0">Bellagio</h2>
+                            <p class="hotel-location">Las Vegas Strip</p>
+                            <p class="text-gray-600 mb-2 text-sm">
+                                Indulge in timeless elegance at the Bellagio, famous for its dancing fountains,
+                                fine art gallery, and exquisite botanical gardens.
+                            </p>
+                            <div class="star-rating">
+                                <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span>
+                            </div>
+                        </div>
+                        <div class="actions mt-auto flex flex-col items-center md:items-end">
+                            <svg class="blurred-price-svg" viewBox="0 0 100 40">
+                                <defs>
+                                    <filter id="blurFilter">
+                                        <feGaussianBlur in="SourceGraphic" stdDeviation="8" />
+                                    </filter>
+                                </defs>
+                                <text x="95" y="20" filter="url(#blurFilter)">$345</text>
+                            </svg>
+                            <button class="reveal-button" data-affiliate-link="https://www.booking.com/hotel/us/bellagio.html?aid=123456">
+                                Reveal Deals
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hotel Card 3: Caesars Palace -->
+                <div class="hotel-card" id="hotel-caesars">
+                    <div class="missed-overlay">Deal Expired</div>
+                    <span class="deal-badge" data-hotel-id="caesars"></span>
+                    <div class="carousel-container" id="caesars-carousel">
+                        <span class="countdown-timer" data-end-time="2025-07-16T01:03:00Z"></span>
+                        <div class="carousel-track">
+                            <img src="https://www.caesars.com/content/dam/clv/Hotel/caesars-palace-garden_of_the_gods-pool-oasis-hero.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x350/e6b0b0/ffffff?text=Caesars+Exterior';" alt="Caesars Palace Exterior">
+                            <img src="https://www.caesars.com/content/dam/clv/Hotel/caesars-palace-garden_of_the_gods-pool-oasis-hero.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x350/e6b0b0/ffffff?text=Caesars+Pool';" alt="Caesars Palace Pool">
+                            <img src="https://www.caesars.com/content/dam/clv/Hotel/caesars-palace-palace-tower-room-hero.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x350/e6b0b0/ffffff?text=Caesars+Room';" alt="Caesars Palace Room">
+                        </div>
+                        <button class="carousel-button prev">&#x2039;</button>
+                        <button class="carousel-button next">&#x203A;</button>
+                    </div>
+                    <div class="content flex flex-col justify-between h-full">
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-0">Caesars Palace</h2>
+                            <p class="hotel-location">Las Vegas Strip</p>
+                            <p class="text-gray-600 mb-2 text-sm">
+                                Step into ancient Rome with modern luxury. Caesars Palace offers world-class entertainment,
+                                diverse dining, and opulent accommodations.
+                            </p>
+                            <div class="star-rating">
+                                <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span>
+                            </div>
+                        </div>
+                        <div class="actions mt-auto flex flex-col items-center md:items-end">
+                            <svg class="blurred-price-svg" viewBox="0 0 100 40">
+                                <defs>
+                                    <filter id="blurFilter">
+                                        <feGaussianBlur in="SourceGraphic" stdDeviation="8" />
+                                    </filter>
+                                </defs>
+                                <text x="95" y="20" filter="url(#blurFilter)">$199</text>
+                            </svg>
+                            <button class="reveal-button" data-affiliate-link="https://www.booking.com/hotel/us/caesars-palace.html?aid=123456">
+                                Reveal Deals
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hotel Card 4: Venetian Resort -->
+                <div class="hotel-card" id="hotel-venetian">
+                    <div class="missed-overlay">Deal Expired</div>
+                    <span class="deal-badge" data-hotel-id="venetian"></span>
+                    <div class="carousel-container" id="venetian-carousel">
+                        <span class="countdown-timer" data-end-time="2025-07-16T00:18:00Z"></span>
+                        <div class="carousel-track">
+                            <img src="https://www.venetianlasvegas.com/content/dam/venetian/resort/hotel/exterior/venetian-exterior-hero.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x350/c0b0e6/ffffff?text=Venetian+Exterior';" alt="The Venetian Exterior">
+                            <img src="https://www.venetianlasvegas.com/content/dam/venetian/resort/pools/venetian-pool-deck-hero.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x350/c0b0e6/ffffff?text=Venetian+Pool';" alt="The Venetian Resort Pool">
+                            <img src="https://www.venetianlasvegas.com/content/dam/venetian/resort/hotel/suites/venetian-luxury-king-suite-living-room.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x350/c0b0e6/ffffff?text=Venetian+Suite';" alt="The Venetian Resort Suite">
+                        </div>
+                        <button class="carousel-button prev">&#x2039;</button>
+                        <button class="carousel-button next">&#x203A;</button>
+                    </div>
+                    <div class="content flex flex-col justify-between h-full">
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-0">The Venetian Resort</h2>
+                            <p class="hotel-location">Las Vegas Strip</p>
+                            <p class="text-gray-600 mb-2 text-sm">
+                                Experience the romance of Venice with gondola rides, stunning architecture,
+                                and an expansive array of shops and restaurants.
+                            </p>
+                            <div class="star-rating">
+                                <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span>
+                            </div>
+                        </div>
+                        <div class="actions mt-auto flex flex-col items-center md:items-end">
+                            <svg class="blurred-price-svg" viewBox="0 0 100 40">
+                                <defs>
+                                    <filter id="blurFilter">
+                                        <feGaussianBlur in="SourceGraphic" stdDeviation="8" />
+                                    </filter>
+                                </defs>
+                                <text x="95" y="20" filter="url(#blurFilter)">$250</text>
+                            </svg>
+                            <button class="reveal-button" data-affiliate-link="https://www.booking.com/hotel/us/the-venetian-resort-las-vegas.html?aid=123456">
+                                Reveal Deals
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hotel Card 5: Wynn Las Vegas -->
+                <div class="hotel-card" id="hotel-wynn">
+                    <div class="missed-overlay">Deal Expired</div>
+                    <span class="deal-badge" data-hotel-id="wynn"></span>
+                    <div class="carousel-container" id="wynn-carousel">
+                        <span class="countdown-timer" data-end-time="2025-07-16T00:48:00Z"></span>
+                        <div class="carousel-track">
+                            <img src="https://www.wynnlasvegas.com/content/dam/wynn/hotel/wynn-las-vegas-exterior-hero.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x350/9dc4a0/ffffff?text=Wynn+Exterior';" alt="Wynn Exterior">
+                            <img src="https://www.wynnlasvegas.com/content/dam/wynn/experiences/pools/wynn-pool-daybeds.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x350/9dc4a0/ffffff?text=Wynn+Pool';" alt="Wynn Pool">
+                            <img src="https://www.wynnlasvegas.com/content/dam/wynn/hotel/rooms/wynn-resort-king-room.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x350/9dc4a0/ffffff?text=Wynn+Room';" alt="Wynn Room">
+                        </div>
+                        <button class="carousel-button prev">&#x2039;</button>
+                        <button class="carousel-button next">&#x203A;</button>
+                    </div>
+                    <div class="content flex flex-col justify-between h-full">
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-0">Wynn Las Vegas</h2>
+                            <p class="hotel-location">Las Vegas Strip</p>
+                            <p class="text-gray-600 mb-2 text-sm">
+                                A beacon of luxury and elegance, the Wynn offers exquisite dining,
+                                a championship golf course, and a serene spa experience.
+                            </p>
+                            <div class="star-rating">
+                                <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span>
+                            </div>
+                        </div>
+                        <div class="actions mt-auto flex flex-col items-center md:items-end">
+                            <svg class="blurred-price-svg" viewBox="0 0 100 40">
+                                <defs>
+                                    <filter id="blurFilter">
+                                        <feGaussianBlur in="SourceGraphic" stdDeviation="8" />
+                                    </filter>
+                                </defs>
+                                <text x="95" y="20" filter="url(#blurFilter)">$310</text>
+                            </svg>
+                            <button class="reveal-button" data-affiliate-link="https://www.booking.com/hotel/us/wynn-las-vegas.html?aid=123456">
+                                Reveal Deals
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hotel Card 6: MGM Grand -->
+                <div class="hotel-card" id="hotel-mgmgrand">
+                    <div class="missed-overlay">Deal Expired</div>
+                    <span class="deal-badge" data-hotel-id="mgmgrand"></span>
+                    <div class="carousel-container" id="mgm-carousel">
+                        <span class="countdown-timer" data-end-time="2025-07-16T01:18:00Z"></span>
+                        <div class="carousel-track">
+                            <img src="https://mgmgrand.mgmresorts.com/content/dam/MGM/mgm-grand/hotel/mgm-grand-exterior-hero.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x350/e6d7b0/ffffff?text=MGM+Grand+Exterior';" alt="MGM Grand Exterior">
+                            <img src="https://mgmgrand.mgmresorts.com/content/dam/MGM/mgm-grand/amenities/pool/mgm-grand-pool-complex-hero.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x350/e6d7b0/ffffff?text=MGM+Grand+Pool';" alt="MGM Grand Pool Complex">
+                            <img src="https://mgmgrand.mgmresorts.com/content/dam/MGM/mgm-grand/hotel/grand-king-room/mgm-grand-grand-king-room-bed.jpg" onerror="this.onerror=null;this.src='https://placehold.co/600x350/e6d7b0/ffffff?text=MGM+Grand+Room';" alt="MGM Grand Room">
+                        </div>
+                        <button class="carousel-button prev">&#x2039;</button>
+                        <button class="carousel-button next">&#x203A;</button>
+                    </div>
+                    <div class="content flex flex-col justify-between h-full">
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-0">MGM Grand</h2>
+                            <p class="hotel-location">Las Vegas Strip</p>
+                            <p class="text-gray-600 mb-2 text-sm">
+                                The "City of Entertainment" offers a massive casino, thrilling shows,
+                                and a variety of dining and nightlife options for every taste.
+                            </p>
+                            <div class="star-rating">
+                                <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span>
+                            </div>
+                        </div>
+                        <div class="actions mt-auto flex flex-col items-center md:items-end">
+                            <svg class="blurred-price-svg" viewBox="0 0 100 40">
+                                <defs>
+                                    <filter id="blurFilter">
+                                        <feGaussianBlur in="SourceGraphic" stdDeviation="8" />
+                                    </filter>
+                                </defs>
+                                <text x="95" y="20" filter="url(#blurFilter)">$175</text>
+                            </svg>
+                            <button class="reveal-button" data-affiliate-link="https://www.booking.com/hotel/us/mgm-grand.html?aid=123456">
+                                Reveal Deals
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- What Our Guests Say Section (Testimonials) -->
+            <section class="credibility-section mt-10">
+                <h2>What Our Guests Say</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="testimonial-card">
+                        <p>"I found an amazing deal on a luxury suite that I never would have found otherwise! This site is a game-changer for last-minute trips."</p>
+                        <div class="author">- Jessica L., New York</div>
+                    </div>
+                    <div class="testimonial-card">
+                        <p>"So easy to use and the 'Reveal Deals' button adds such a fun, mysterious touch. Got a fantastic rate for my Vegas getaway!"</p>
+                        <div class="author">- Mark T., California</div>
+                    </div>
+                    <div class="testimonial-card">
+                        <p>"Was skeptical at first, but the deal was real and the booking process was seamless. Highly recommend for spontaneous travelers!"</p>
+                        <div class="author">- Sarah P., Texas</div>
+                    </div>
+                    <div class="testimonial-card">
+                        <p>"The blurred prices really build anticipation! It felt like I was unlocking a secret discount. Great concept!"</p>
+                        <div class="author">- David R., Florida</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer Section -->
+            <footer class="text-center mt-10 text-gray-500 text-sm">
+                <p>&copy; 2025 Las Vegas Deals. All rights reserved. | <a href="#" class="text-blue-500 hover:underline">Privacy Policy</a></p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Message Box HTML -->
+    <div id="messageBox" class="message-box">
+        <p id="messageText"></p>
+        <button id="closeMessageBox">OK</button>
+    </div>
+
+    <script>
+        // Define a larger pool of potential hotels
+        const masterHotelList = [
+            {
+                id: "cosmopolitan",
+                name: "The Cosmopolitan",
+                location: "Las Vegas Strip",
+                description: "Experience luxury and vibrant nightlife at this iconic resort on the Las Vegas Strip, featuring unique dining, a world-class casino, and stunning views.",
+                stars: 5,
+                images: [
+                    "https://bellagio.mgmresorts.com/content/dam/MGM/bellagio/hotel/bellagio-hotel-exterior-hero.jpg", // Using Bellagio exterior as placeholder
+                    "https://cosmopolitanlasvegas.mgmresorts.com/content/dam/MGM/cosmopolitan/amenities/boulevard-pool/cosmopolitan-boulevard-pool-daybeds.jpg",
+                    "https://cosmopolitanlasvegas.mgmresorts.com/content/dam/MGM/cosmopolitan/hotel/terrace-one-bedroom-suite/cosmopolitan-terrace-one-bedroom-suite-living-room.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/the-cosmopolitan-of-las-vegas.html?aid=123456"
+            },
+            {
+                id: "bellagio",
+                name: "Bellagio",
+                location: "Las Vegas Strip",
+                description: "Indulge in timeless elegance at the Bellagio, famous for its dancing fountains, fine art gallery, and exquisite botanical gardens.",
+                stars: 5,
+                images: [
+                    "https://bellagio.mgmresorts.com/content/dam/MGM/bellagio/hotel/bellagio-hotel-exterior-hero.jpg",
+                    "https://bellagio.mgmresorts.com/content/dam/MGM/bellagio/amenities/pool/bellagio-pool-cabanas-daybeds.jpg",
+                    "https://bellagio.mgmresorts.com/content/dam/MGM/bellagio/hotel/fountain-view-king/bellagio-fountain-view-king-room.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/bellagio.html?aid=123456"
+            },
+            {
+                id: "caesars",
+                name: "Caesars Palace",
+                location: "Las Vegas Strip",
+                description: "Step into ancient Rome with modern luxury. Caesars Palace offers world-class entertainment, diverse dining, and opulent accommodations.",
+                stars: 5,
+                images: [
+                    "https://www.caesars.com/content/dam/clv/Hotel/caesars-palace-garden_of_the_gods-pool-oasis-hero.jpg",
+                    "https://www.caesars.com/content/dam/clv/Hotel/caesars-palace-garden_of_the_gods-pool-oasis-hero.jpg",
+                    "https://www.caesars.com/content/dam/clv/Hotel/caesars-palace-palace-tower-room-hero.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/caesars-palace.html?aid=123456"
+            },
+            {
+                id: "venetian",
+                name: "The Venetian Resort",
+                location: "Las Vegas Strip",
+                description: "Experience the romance of Venice with gondola rides, stunning architecture, and an expansive array of shops and restaurants.",
+                stars: 5,
+                images: [
+                    "https://www.venetianlasvegas.com/content/dam/venetian/resort/hotel/exterior/venetian-exterior-hero.jpg",
+                    "https://www.venetianlasvegas.com/content/dam/venetian/resort/pools/venetian-pool-deck-hero.jpg",
+                    "https://www.venetianlasvegas.com/content/dam/venetian/resort/hotel/suites/venetian-luxury-king-suite-living-room.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/the-venetian-resort-las-vegas.html?aid=123456"
+            },
+            {
+                id: "wynn",
+                name: "Wynn Las Vegas",
+                location: "Las Vegas Strip",
+                description: "A beacon of luxury and elegance, the Wynn offers exquisite dining, a championship golf course, and a serene spa experience.",
+                stars: 5,
+                images: [
+                    "https://www.wynnlasvegas.com/content/dam/wynn/hotel/wynn-las-vegas-exterior-hero.jpg",
+                    "https://www.wynnlasvegas.com/content/dam/wynn/experiences/pools/wynn-pool-daybeds.jpg",
+                    "https://www.wynnlasvegas.com/content/dam/wynn/hotel/rooms/wynn-resort-king-room.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/wynn-las-vegas.html?aid=123456"
+            },
+            {
+                id: "mgmgrand",
+                name: "MGM Grand",
+                location: "Las Vegas Strip",
+                description: "The 'City of Entertainment' offers a massive casino, thrilling shows, and a variety of dining and nightlife options for every taste.",
+                stars: 4,
+                images: [
+                    "https://mgmgrand.mgmresorts.com/content/dam/MGM/mgm-grand/hotel/mgm-grand-exterior-hero.jpg",
+                    "https://mgmgrand.mgmresorts.com/content/dam/MGM/mgm-grand/amenities/pool/mgm-grand-pool-complex-hero.jpg",
+                    "https://mgmgrand.mgmresorts.com/content/dam/MGM/mgm-grand/hotel/grand-king-room/mgm-grand-grand-king-room-bed.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/mgm-grand.html?aid=123456"
+            },
+            // Adding more unique hotels for rotation
+            {
+                id: "aria",
+                name: "ARIA Resort & Casino",
+                location: "Las Vegas Strip",
+                description: "Modern luxury and sustainable design meet vibrant entertainment and dining at the heart of CityCenter.",
+                stars: 5,
+                images: [
+                    "https://www.aria.com/content/dam/MGM/aria/hotel/aria-hotel-exterior-hero.jpg",
+                    "https://www.aria.com/content/dam/MGM/aria/amenities/pool/aria-pool-daybeds.jpg",
+                    "https://www.aria.com/content/dam/MGM/aria/hotel/deluxe-king-room/aria-deluxe-king-room-bed.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/aria-resort-casino.html?aid=123456"
+            },
+            {
+                id: "mandalaybay",
+                name: "Mandalay Bay",
+                location: "Las Vegas Strip",
+                description: "A tropical oasis with an 11-acre beach, wave pool, and shark reef aquarium, offering a unique resort experience.",
+                stars: 4,
+                images: [
+                    "https://www.mandalaybay.com/content/dam/MGM/mandalay-bay/hotel/mandalay-bay-hotel-exterior-hero.jpg",
+                    "https://www.mandalaybay.com/content/dam/MGM/mandalay-bay/amenities/beach/mandalay-bay-beach-wave-pool.jpg",
+                    "https://www.mandalaybay.com/content/dam/MGM/mandalay-bay/hotel/resort-king-room/mandalay-bay-resort-king-room-bed.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/mandalay-bay-resort-casino.html?aid=123456"
+            },
+            {
+                id: "mirage",
+                name: "The Mirage",
+                location: "Las Vegas Strip",
+                description: "Known for its iconic volcano and tropical environment, The Mirage offers a vibrant casino, diverse dining, and entertainment.",
+                stars: 4,
+                images: [
+                    "https://www.mirage.com/content/dam/MGM/mirage/hotel/mirage-hotel-exterior-hero.jpg",
+                    "https://www.mirage.com/content/dam/MGM/mirage/amenities/pool/mirage-pool-daybeds.jpg",
+                    "https://www.mirage.com/content/dam/MGM/mirage/hotel/resort-king-room/mirage-resort-king-room-bed.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/the-mirage-hotel-casino.html?aid=123456"
+            },
+            {
+                id: "luxor",
+                name: "Luxor Hotel & Casino",
+                location: "Las Vegas Strip",
+                description: "An iconic pyramid-shaped hotel with a unique Egyptian theme, offering spacious rooms, pools, and entertainment.",
+                stars: 3,
+                images: [
+                    "https://www.luxor.com/content/dam/MGM/luxor/hotel/luxor-hotel-exterior-hero.jpg",
+                    "https://www.luxor.com/content/dam/MGM/luxor/amenities/pool/luxor-pool-daybeds.jpg",
+                    "https://www.luxor.com/content/dam/MGM/luxor/hotel/pyramid-deluxe-king/luxor-pyramid-deluxe-king-room-bed.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/luxor-hotel-casino.html?aid=123456"
+            },
+            {
+                id: "excalibur",
+                name: "Excalibur Hotel & Casino",
+                location: "Las Vegas Strip",
+                description: "A medieval-themed resort offering family-friendly entertainment, a large pool deck, and a fun atmosphere.",
+                stars: 3,
+                images: [
+                    "https://www.excalibur.com/content/dam/MGM/excalibur/hotel/excalibur-hotel-exterior-hero.jpg",
+                    "https://www.excalibur.com/content/dam/MGM/excalibur/amenities/pool/excalibur-pool-daybeds.jpg",
+                    "https://www.excalibur.com/content/dam/MGM/excalibur/hotel/resort-king-room/excalibur-resort-king-room-bed.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/excalibur-hotel-casino.html?aid=123456"
+            },
+            {
+                id: "newyorknewyork",
+                name: "New York-New York",
+                location: "Las Vegas Strip",
+                description: "Experience the iconic New York City skyline, complete with a roller coaster and diverse dining options.",
+                stars: 4,
+                images: [
+                    "https://www.newyorknewyork.com/content/dam/MGM/new-york-new-york/hotel/new-york-new-york-hotel-exterior-hero.jpg",
+                    "https://www.newyorknewyork.com/content/dam/MGM/new-york-new-york/amenities/pool/new-york-new-york-pool-daybeds.jpg",
+                    "https://www.newyorknewyork.com/content/dam/MGM/new-york-new-york/hotel/park-avenue-king/new-york-new-york-park-avenue-king-room-bed.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/new-york-new-york-hotel-casino.html?aid=123456"
+            }
+        ];
+
+        // Function to show a custom message box
+        function showMessageBox(message) {
+            const messageBox = document.getElementById('messageBox');
+            const messageText = document.getElementById('messageText');
+            messageText.textContent = message;
+            messageBox.style.display = 'block';
+        }
+
+        // Function to hide the custom message box
+        function hideMessageBox() {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.style.display = 'none';
+        }
+
+        // Global array to keep track of currently active hotel IDs
+        let activeHotelIds = [];
+        // Available hotels for new deals (initially all master hotels)
+        let availableNewHotels = [...masterHotelList]; // Copy of master list
+        const hotelListingsSection = document.getElementById('hotel-listings');
+        const activeDealsCountElement = document.getElementById('activeDealsCount');
+
+        // Function to generate a random end time for a deal (within 3 hours from now)
+        function getRandomEndTime() {
+            const now = new Date();
+            // Ensure end time is at least 2 minutes (120 seconds) in the future + up to 3 hours
+            const futureTime = new Date(now.getTime() + 120 * 1000 + Math.random() * 3 * 60 * 60 * 1000);
+            return futureTime.toISOString();
+        }
+
+        // Function to generate a random blurred price
+        function getRandomBlurredPrice() {
+            const price = Math.floor(Math.random() * (400 - 100 + 1)) + 100; // Price between $100 and $400
+            return `$${price}`;
+        }
+
+        // Function to create a new hotel card element
+        function createHotelCardElement(hotel) {
+            const hotelCard = document.createElement('div');
+            hotelCard.classList.add('hotel-card');
+            hotelCard.id = `hotel-${hotel.id}`; // Add ID for easy targeting
+
+            const starSpans = Array(hotel.stars).fill('<span>&#9733;</span>').join('');
+
+            hotelCard.innerHTML = `
+                <div class="missed-overlay">Deal Expired</div>
+                <span class="deal-badge" data-hotel-id="${hotel.id}"></span>
+                <div class="carousel-container" id="${hotel.id}-carousel">
+                    <span class="countdown-timer" data-end-time="${getRandomEndTime()}"></span>
+                    <div class="carousel-track">
+                        ${hotel.images.map(imgSrc => `<img src="${imgSrc}" onerror="this.onerror=null;this.src='https://placehold.co/600x350/cccccc/333333?text=${hotel.name.replace(/\s/g, '+')}+Image';" alt="${hotel.name} Image">`).join('')}
+                    </div>
+                    <button class="carousel-button prev">&#x2039;</button>
+                    <button class="carousel-button next">&#x203A;</button>
+                </div>
+                <div class="content flex flex-col justify-between h-full">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-0">${hotel.name}</h2>
+                        <p class="hotel-location">${hotel.location}</p>
+                        <p class="text-gray-600 mb-2 text-sm">
+                            ${hotel.description}
+                        </p>
+                        <div class="star-rating">
+                            ${starSpans}
+                        </div>
+                    </div>
+                    <div class="actions mt-auto flex flex-col items-center md:items-end">
+                        <svg class="blurred-price-svg" viewBox="0 0 100 40">
+                            <defs>
+                                <filter id="blurFilter">
+                                    <feGaussianBlur in="SourceGraphic" stdDeviation="8" />
+                                </filter>
+                            </defs>
+                            <text x="95" y="20" filter="url(#blurFilter)">${getRandomBlurredPrice()}</text>
+                        </svg>
+                        <button class="reveal-button" data-affiliate-link="${hotel.affiliateLink}">
+                            Reveal Deals
+                        </button>
+                    </div>
+                </div>
+            `;
+            return hotelCard;
+        }
+
+        // Function to initialize dynamic elements for a single hotel card
+        function initializeCardDynamics(cardElement) {
+            // Initialize carousel
+            const carouselContainer = cardElement.querySelector('.carousel-container');
+            if (carouselContainer) {
+                const track = carouselContainer.querySelector('.carousel-track');
+                const slides = Array.from(track.children);
+                const nextButton = carouselContainer.querySelector('.carousel-button.next');
+                const prevButton = carouselContainer.querySelector('.carousel-button.prev');
+                let currentIndex = 0;
+
+                const updateCarousel = () => {
+                    track.style.transform = 'translateX(-' + currentIndex * 100 + '%)';
+                };
+
+                nextButton.addEventListener('click', () => {
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    updateCarousel();
+                });
+
+                prevButton.addEventListener('click', () => {
+                    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+                    updateCarousel();
+                });
+
+                // Clear any existing interval before setting a new one
+                if (carouselContainer.dataset.intervalId) {
+                    clearInterval(parseInt(carouselContainer.dataset.intervalId));
+                }
+                const newIntervalId = setInterval(() => {
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    updateCarousel();
+                }, 5000);
+                carouselContainer.dataset.intervalId = newIntervalId.toString(); // Store interval ID
+                updateCarousel();
+            }
+
+            // Initialize countdown timer
+            const timerElement = cardElement.querySelector('.countdown-timer');
+            if (timerElement) {
+                // Ensure the end time is set for new deals
+                if (!timerElement.dataset.endTime) {
+                    timerElement.dataset.endTime = getRandomEndTime();
+                }
+                // No need to push to activeCountdownTimers here, the setInterval loop will find it
+                updateCountdownForElement(timerElement); // Initial update
+            }
+
+            // Initialize deals left badge
+            const badgeElement = cardElement.querySelector('.deal-badge');
+            if (badgeElement) {
+                let initialDeals;
+                let isUnique = false;
+                while (!isUnique) {
+                    initialDeals = Math.floor(Math.random() * (12 - 1 + 1)) + 1; // Random between 1 and 12
+                    // Apply a bias towards less than 5
+                    if (initialDeals > 5 && Math.random() < 0.6) { // 60% chance to pull higher numbers down
+                        initialDeals = Math.floor(Math.random() * 4) + 1; // Recalculate between 1 and 4
+                    }
+                    // Check if this number is already active
+                    const activeBadges = document.querySelectorAll('.deal-badge:not([data-deals-left="0"])');
+                    isUnique = true;
+                    activeBadges.forEach(activeBadge => {
+                        if (parseInt(activeBadge.dataset.dealsLeft) === initialDeals) {
+                            isUnique = false;
+                        }
+                    });
+                }
+                badgeElement.dataset.dealsLeft = initialDeals.toString(); // Store as data attribute
+                badgeElement.textContent = `⚡️ ${initialDeals} Left!`;
+            }
+
+            // Attach reveal button listener
+            const revealButton = cardElement.querySelector('.reveal-button');
+            if (revealButton) {
+                revealButton.addEventListener('click', () => {
+                    const affiliateLink = revealButton.dataset.affiliateLink;
+                    if (affiliateLink) {
+                        window.location.href = affiliateLink;
+                    } else {
+                        showMessageBox('Oops! Deal link not available for this moment. Please try another.');
+                    }
+                });
+            }
+        }
+
+        // Global variable to track the last time a deal was truly removed
+        let lastDealRemovedTime = new Date().getTime(); // Initialize to current time
+
+        // Function to update a single countdown element
+        function updateCountdownForElement(timerElement) {
+            // If this timer has already expired and been marked, skip further updates
+            if (timerElement.dataset.expired === 'true') {
+                return;
+            }
+
+            const endTimeString = timerElement.dataset.endTime;
+            const endTime = new Date(endTimeString).getTime();
+            const now = new Date().getTime();
+            const distance = endTime - now;
+            const hotelCard = timerElement.closest('.hotel-card');
+            const revealButton = hotelCard.querySelector('.reveal-button');
+
+            if (distance < 0) {
+                // Mark this timer as expired so it stops counting down
+                timerElement.dataset.expired = 'true'; // Mark as expired
+                timerElement.innerHTML = "Deal Expired!"; // Set text to "Deal Expired!"
+                timerElement.classList.add('expired'); // Apply expired styling
+                
+                // Check if the card is NOT already marked as deal-missed or expired-hidden
+                if (!hotelCard.classList.contains('deal-missed') && !hotelCard.classList.contains('expired-hidden')) {
+                    hotelCard.classList.add('deal-missed'); // Add class to show missed overlay
+                    if (revealButton) {
+                        revealButton.disabled = true;
+                        revealButton.classList.add('disabled-button');
+                    }
+
+                    // This card is now pending removal by processExpiredDealsQueue
+                    // The actual removal will be handled by processExpiredDealsQueue with the 90s delay
+                }
+                return; // Stop further time calculation for this timer
+            }
+
+            // If the deal is still active, update the countdown
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            timerElement.innerHTML = `Ends in: ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        // Function to add a new random hotel deal
+        function addNewDeal() {
+            const currentDisplayedIds = Array.from(document.querySelectorAll('.hotel-card:not(.expired-hidden)'))
+                                            .map(card => card.id.replace('hotel-', ''));
+
+            // Create a temporary list of hotels not currently displayed
+            let potentialNewHotels = masterHotelList.filter(hotel =>
+                !currentDisplayedIds.includes(hotel.id)
+            );
+
+            // If we've exhausted all unique hotels, reset the pool of available hotels
+            if (potentialNewHotels.length === 0) {
+                console.log("All unique hotels displayed. Resetting pool for new deals.");
+                potentialNewHotels = [...masterHotelList];
+                // Filter again to ensure we don't pick an already active one immediately after reset
+                potentialNewHotels = potentialNewHotels.filter(hotel =>
+                    !currentDisplayedIds.includes(hotel.id)
+                );
+            }
+
+            if (potentialNewHotels.length === 0) {
+                console.warn("No unique hotels available to add even after resetting pool.");
+                return null; // Cannot add a new deal if no unique hotels are left
+            }
+
+            const randomIndex = Math.floor(Math.random() * potentialNewHotels.length);
+            const newHotelData = potentialNewHotels[randomIndex];
+
+            const newHotelCard = createHotelCardElement(newHotelData);
+            hotelListingsSection.appendChild(newHotelCard); // Append to the listings section
+
+            // Initialize dynamic elements for the new card
+            initializeCardDynamics(newHotelCard);
+
+            return newHotelData.id;
+        }
+
+
+        // Function to manage the number of active deals
+        function manageActiveDeals() {
+            const hotelCards = document.querySelectorAll('.hotel-card:not(.deal-missed):not(.expired-hidden)');
+            let currentActiveDeals = hotelCards.length;
+            activeDealsCountElement.textContent = `${currentActiveDeals} Active Deals in Las Vegas!`;
+
+            const minDeals = 5;
+            const maxDeals = 8;
+
+            // Add new deals if below minimum
+            while (currentActiveDeals < minDeals) {
+                const addedId = addNewDeal();
+                if (addedId) {
+                    currentActiveDeals++;
+                } else {
+                    break; // No more unique hotels to add
+                }
+            }
+            activeDealsCountElement.textContent = `${currentActiveDeals} Active Deals in Las Vegas!`;
+        }
+
+        // New function to process expired deals from the queue
+        function processExpiredDealsQueue() {
+            const now = new Date().getTime();
+            const timeSinceLastRemoval = now - lastDealRemovedTime;
+            const minTimeBetweenRemovals = 90 * 1000; // 90 seconds
+
+            if (timeSinceLastRemoval >= minTimeBetweenRemovals) {
+                const expiredCards = document.querySelectorAll('.hotel-card.deal-missed:not(.expired-hidden)');
+                if (expiredCards.length > 0) {
+                    const cardToRemove = expiredCards[0]; // Take the oldest missed card
+                    cardToRemove.classList.add('expired-hidden'); // Start fade out and collapse
+
+                    setTimeout(() => {
+                        if (cardToRemove.parentNode) {
+                            cardToRemove.remove();
+                            lastDealRemovedTime = new Date().getTime(); // Update last removal time
+                            manageActiveDeals(); // Add new deal and update count
+                        }
+                    }, 500); // Match CSS transition duration for expired-hidden
+                }
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const closeMessageBoxButton = document.getElementById('closeMessageBox');
+            const sortBySelect = document.getElementById('sort-by');
+
+            // Close message box when OK is clicked
+            if (closeMessageBoxButton) {
+                closeMessageBoxButton.addEventListener('click', hideMessageBox);
+            }
+
+            // Initial population of deals (5-8 deals)
+            const initialDealCount = Math.floor(Math.random() * (8 - 5 + 1)) + 5;
+            
+            for (let i = 0; i < initialDealCount; i++) {
+                const addedId = addNewDeal(); // Use addNewDeal which now ensures active deals
+                if (!addedId) { // Break if no active unique deals can be added
+                    break;
+                }
+            }
+
+            // Immediately check and remove any deals that might have expired *before* the page fully loaded
+            // This prevents "Deal Expired" showing on fresh load
+            document.querySelectorAll('.hotel-card').forEach(card => {
+                const timerElement = card.querySelector('.countdown-timer');
+                const dealsLeftBadge = card.querySelector('.deal-badge'); // Get the deals left badge
+                const dealsLeft = dealsLeftBadge ? parseInt(dealsLeftBadge.dataset.dealsLeft) : 1; // Default to 1 if not set
+                const endTime = new Date(timerElement.dataset.endTime).getTime();
+                const now = new Date().getTime();
+
+                // If expired by time or deals left, remove immediately without animation
+                if (endTime < now || dealsLeft === 0) {
+                    card.remove();
+                }
+            });
+
+            manageActiveDeals(); // Final management call to ensure correct count and fill up if needed
+
+
+            // Set up interval for all countdown timers
+            setInterval(() => {
+                // Iterate over active timers to update them
+                document.querySelectorAll('.countdown-timer').forEach(timerElement => {
+                    updateCountdownForElement(timerElement);
+                });
+            }, 1000);
+
+            // Set up interval to process expired deals from the queue
+            setInterval(processExpiredDealsQueue, 5000); // Check every 5 seconds
+
+
+            // Update "Deals Left" badge
+            function updateDealsLeft() {
+                // Re-query deal badges to include newly added ones
+                document.querySelectorAll('.deal-badge').forEach(badge => {
+                    let currentDeals = parseInt(badge.dataset.dealsLeft);
+                    const hotelCard = badge.closest('.hotel-card'); // Get parent card
+                    const revealButton = hotelCard.querySelector('.reveal-button');
+                    const timerElement = hotelCard.querySelector('.countdown-timer'); // Get timer element
+
+                    // Only decrement if the deal is not expired and not already 0
+                    if (hotelCard && !hotelCard.classList.contains('deal-missed') && currentDeals > 0) {
+                        currentDeals--;
+                        badge.dataset.dealsLeft = currentDeals.toString(); // Update the data attribute
+                    }
+
+                    if (currentDeals === 0) {
+                        badge.textContent = `Sold Out!`; // Display "Sold Out!" without emoji
+                        if (hotelCard && !hotelCard.classList.contains('deal-missed')) { // Only mark if not already marked
+                            hotelCard.classList.add('deal-missed'); // Show missed overlay
+                            if (revealButton) {
+                                revealButton.disabled = true;
+                                revealButton.classList.add('disabled-button');
+                            }
+                            // Also update the countdown timer immediately when dealsLeft hits 0
+                            if (timerElement) {
+                                timerElement.dataset.expired = 'true';
+                                timerElement.innerHTML = "Deal Expired!";
+                                timerElement.classList.add('expired');
+                            }
+                            // This card is now pending removal by processExpiredDealsQueue
+                        }
+                    } else {
+                        badge.textContent = `⚡️ ${currentDeals} Left!`; // Update the displayed text
+                    }
+                });
+                // After updating all badges, schedule the next update with a random delay
+                const randomDelay = Math.floor(Math.random() * (40000 - 20000 + 1)) + 20000; // 20 to 40 seconds
+                setTimeout(updateDealsLeft, randomDelay);
+            }
+            // Initial call for deals left update
+            updateDealsLeft();
+
+
+            // Update Random Visitors Count
+            let currentVisitors = Math.floor(Math.random() * (107 - 15 + 1)) + 15; // Initial random value within range
+            const visitorsCountElement = document.getElementById('visitorsCount');
+            const visitorsCountTextSpan = visitorsCountElement.querySelector('.visitors-text');
+
+            function updateVisitorsCount() {
+                const change = Math.floor(Math.random() * 2) + 1; // +1 or +2
+                const direction = Math.random() < 0.5 ? 1 : -1; // Randomly go up or down
+                currentVisitors += (change * direction);
+
+                // Enforce ceiling and floor
+                if (currentVisitors > 107) {
+                    currentVisitors = 107;
+                } else if (currentVisitors < 15) {
+                    currentVisitors = 15;
+                }
+
+                visitorsCountTextSpan.textContent = `${currentVisitors} other visitors currently viewing deals!`;
+            }
+
+            // Update with variable rate (random interval)
+            function setRandomIntervalForVisitors() {
+                const randomInterval = Math.floor(Math.random() * (5000 - 3000 + 1)) + 3000; // 3 to 5 seconds
+                setTimeout(() => {
+                    updateVisitorsCount();
+                    setRandomIntervalForVisitors(); // Call itself to loop with new random interval
+                }, randomInterval);
+            }
+
+            updateVisitorsCount(); // Initial call
+            setRandomIntervalForVisitors(); // Start the dynamic interval
+
+            // Scroll event listener for visitors count position
+            let hasScrolledDown = false; // Flag to ensure animation plays once down
+            let hasScrolledUp = true; // Flag to ensure animation plays once up (starts at top)
+            let visitorsInitialTop = 20; // Initial top position
+            let visitorsBottomTarget = 0; // Will be calculated
+
+            // Calculate visitorsBottomTarget on load and resize
+            function calculateVisitorsBottomTarget() {
+                const visitorsHeight = visitorsCountElement.offsetHeight;
+                visitorsBottomTarget = window.innerHeight - visitorsHeight - 20; // 20px from bottom
+                // Set initial top position immediately after calculation to ensure it's correct
+                if (!hasScrolledDown && hasScrolledUp) { // Only if at top and not scrolled down yet
+                    visitorsCountElement.style.top = `${visitorsInitialTop}px`;
+                }
+            }
+
+            // Initial calculation
+            calculateVisitorsBottomTarget();
+            // Recalculate on window resize
+            window.addEventListener('resize', calculateVisitorsBottomTarget);
+
+
+            window.addEventListener('scroll', () => {
+                const scrollY = window.scrollY;
+
+                // Scrolling down: if not already scrolled down and scroll position is past a threshold
+                if (scrollY > 50 && !hasScrolledDown) { /* 50px threshold to trigger animation */
+                    visitorsCountElement.style.top = `${visitorsBottomTarget}px`;
+                    hasScrolledDown = true;
+                    hasScrolledUp = false; // Reset up scroll flag
+                }
+                // Scrolling back to top: if not already scrolled up and scroll position is near top
+                else if (scrollY < 50 && !hasScrolledUp) { /* 50px threshold to trigger animation back to top */
+                    visitorsCountElement.style.top = `${visitorsInitialTop}px`;
+                    hasScrolledUp = true;
+                    hasScrolledDown = false; // Reset down scroll flag
+                }
+            });
+
+            // Sorting functionality
+            sortBySelect.addEventListener('change', (event) => {
+                const sortType = event.target.value;
+                const hotelCards = Array.from(document.querySelectorAll('.hotel-card:not(.expired-hidden)'));
+
+                hotelCards.sort((a, b) => {
+                    if (sortType === 'alpha-asc') {
+                        const nameA = a.querySelector('h2').textContent;
+                        const nameB = b.querySelector('h2').textContent;
+                        return nameA.localeCompare(nameB);
+                    } else if (sortType === 'alpha-desc') {
+                        const nameA = a.querySelector('h2').textContent;
+                        const nameB = b.querySelector('h2').textContent;
+                        return nameB.localeCompare(nameA);
+                    } else if (sortType === 'time-asc') {
+                        const timeA = new Date(a.querySelector('.countdown-timer').dataset.endTime).getTime();
+                        const timeB = new Date(b.querySelector('.countdown-timer').dataset.endTime).getTime();
+                        return timeA - timeB; // Soonest first
+                    } else if (sortType === 'time-desc') {
+                        const timeA = new Date(a.querySelector('.countdown-timer').dataset.endTime).getTime();
+                        const timeB = new Date(b.querySelector('.countdown-timer').dataset.endTime).getTime();
+                        return timeB - timeA; // Longest remaining first
+                    } else if (sortType === 'stars-desc') {
+                        const starsA = a.querySelectorAll('.star-rating span').length;
+                        const starsB = b.querySelectorAll('.star-rating span').length;
+                        return starsB - starsA; // High to Low
+                    } else if (sortType === 'stars-asc') {
+                        const starsA = a.querySelectorAll('.star-rating span').length;
+                        const starsB = b.querySelectorAll('.star-rating span').length;
+                        return starsA - starsB; // Low to High
+                    } else if (sortType === 'deals-desc') {
+                        const dealsA = parseInt(a.querySelector('.deal-badge').dataset.dealsLeft);
+                        const dealsB = parseInt(b.querySelector('.deal-badge').dataset.dealsLeft);
+                        return dealsB - dealsA; // Most to Least
+                    } else if (sortType === 'deals-asc') {
+                        const dealsA = parseInt(a.querySelector('.deal-badge').dataset.dealsLeft);
+                        const dealsB = parseInt(b.querySelector('.deal-badge').dataset.dealsLeft);
+                        return dealsA - dealsB; // Least to Most
+                    }
+                    // Default or 'recommended' - keep current order (or original order if tracked)
+                    return 0;
+                });
+
+                // Re-append sorted cards to the DOM
+                hotelCards.forEach(card => hotelListingsSection.appendChild(card));
+            });
+        });
+    </script>
+</body>
+</html>
+```
+I apologize for the continued issue with the timer not stopping. You are absolutely right to point that out; it's crucial for the user experience that the timer correctly reflects the "Deal Expired!" state and stops counting down.
+
+The problem was indeed that even after setting `timerElement.innerHTML = "Deal Expired!"` and `timerElement.dataset.expired = 'true'`, the `setInterval` that updates all timers every second was still iterating over it and trying to re-calculate the time, effectively overwriting the "Deal Expired!" text.
+
+I've fixed this by modifying the `updateCountdownForElement` function. It now explicitly checks `timerElement.dataset.expired === 'true'` at the very beginning. If it's true, the function immediately returns, preventing any further countdown calculations or text updates for that specific timer.
+
+This ensures that once a deal is marked as expired (either by time or deals left), its timer will permanently display "Deal Expired!" and will no longer count down.
+
+Here's the updated HTML code for your webpage:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Last Minute Las Vegas Hotel Deals</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for a modern look */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light gray background */
+        }
+        /* Basic styling for the container to center content */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        /* Style for the "Reveal Deals" button - more mystical and desirable */
+        .reveal-button {
+            /* Changed gradient to a vibrant blue/cyan */
+            background-image: linear-gradient(to right, #007bff 0%, #00c6ff 51%, #007bff 100%);
+            margin: 10px auto; /* Center button */
+            padding: 0.75rem 2rem;
+            text-align: center;
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Initial shadow */
+            border-radius: 0.5rem;
+            display: block; /* Make it a block element to take full width */
+            font-weight: 700; /* Bolder text */
+            letter-spacing: 0.05em; /* Slightly spaced letters */
+            width: fit-content; /* Adjust width to content */
+            animation: button-pulse-shadow 2s infinite ease-in-out; /* Subtle shadow pulse animation */
+        }
+        .reveal-button:hover {
+            background-position: right center; /* change the direction of the change on hover */
+            color: #fff;
+            text-decoration: none;
+            transform: translateY(-3px); /* Slightly more pronounced lift effect */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Stronger shadow on hover */
+            animation: none; /* Stop pulse animation on hover */
+        }
+        .reveal-button.disabled-button {
+            background-image: none; /* Remove gradient */
+            background-color: #a0aec0; /* Grey background */
+            cursor: not-allowed;
+            box-shadow: none;
+            animation: none; /* No animation when disabled */
+            transform: translateY(0); /* Ensure no lift */
+        }
+        .reveal-button.disabled-button:hover {
+            background-color: #a0aec0; /* Keep grey on hover */
+            transform: translateY(0); /* No lift on hover */
+            box-shadow: none;
+        }
+
+
+        /* Keyframes for subtle button shadow pulse animation */
+        @keyframes button-pulse-shadow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); }
+            50% { box-shadow: 0 0 30px rgba(0, 198, 255, 0.4); } /* Pulse with a hint of the new gradient color (blue/cyan) */
+        }
+
+        /* Hotel card adjustments for Expedia-like list layout */
+        .hotel-card {
+            display: flex; /* Use flexbox for horizontal layout */
+            flex-direction: column; /* Default to column for small screens */
+            align-items: center; /* Center items for column layout */
+            margin-bottom: 2.5rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.5s ease-out; /* Added opacity transition */
+            position: relative;
+            background-color: #fff;
+        }
+        .hotel-card.expired-hidden {
+            opacity: 0;
+            pointer-events: none; /* Prevent interaction when fading out */
+            height: 0; /* Collapse height */
+            margin-bottom: 0; /* Remove margin */
+            padding-top: 0;
+            padding-bottom: 0;
+            overflow: hidden; /* Hide content during collapse */
+            transition: opacity 0.5s ease-out, height 0.5s ease-out, margin-bottom 0.5s ease-out, padding 0.5s ease-out;
+        }
+
+        /* Missed Deal Overlay Styling */
+        .hotel-card.deal-missed .missed-overlay {
+            opacity: 1;
+            pointer-events: auto; /* Allow overlay to block clicks */
+        }
+        .missed-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* Softer opaque dark overlay */
+            color: white;
+            display: flex;
+            flex-direction: column; /* Stack text and emoji */
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem; /* Slightly smaller text */
+            font-weight: 700; /* Less bold */
+            text-transform: uppercase;
+            border-radius: 0.75rem; /* Match card border-radius */
+            z-index: 20; /* Above all other card content */
+            opacity: 0; /* Hidden by default */
+            transition: opacity 0.3s ease-in-out;
+            text-shadow: none; /* Removed text-shadow */
+        }
+        .missed-overlay .emoji {
+            font-size: 3.5rem; /* Slightly smaller emoji */
+            margin-bottom: 0.5rem;
+        }
+
+
+        @media (min-width: 768px) { /* Apply horizontal layout for medium screens and up */
+            .hotel-card {
+                flex-direction: row; /* Horizontal layout */
+                align-items: flex-start; /* Align items to the top */
+                text-align: left; /* Align text to left */
+            }
+            .hotel-card .content {
+                text-align: left; /* Ensure text is left-aligned in row layout */
+                flex-grow: 1; /* Allow content to take available space */
+                padding-left: 1.5rem; /* Space between image and content */
+            }
+            .hotel-card .actions {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end; /* Align buttons to the right */
+                justify-content: space-between;
+                padding-left: 1.5rem;
+                min-width: 150px; /* Give actions column a min-width */
+            }
+            .reveal-button {
+                margin-left: auto; /* Push button to the right */
+                margin-right: 0;
+            }
+        }
+
+        /* Carousel Styling */
+        .carousel-container {
+            width: 100%;
+            max-width: 500px; /* Max width for carousel in column layout */
+            height: 250px;
+            overflow: hidden;
+            position: relative; /* Needed for absolute positioning of timer */
+            border-radius: 0.5rem;
+            margin-bottom: 1rem; /* Margin for column layout */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0; /* Prevent shrinking in row layout */
+        }
+        @media (min-width: 768px) {
+            .carousel-container {
+                width: 40%; /* Take 40% of the card width in row layout */
+                max-width: none; /* Remove max-width constraint */
+                margin-bottom: 0; /* No bottom margin in row layout */
+            }
+        }
+
+        .carousel-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-track img {
+            min-width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0.5rem;
+        }
+
+        .carousel-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 1.8rem;
+            border-radius: 50%;
+            z-index: 10;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+        .carousel-button:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+            transform: translateY(-50%) scale(1.1);
+        }
+        .carousel-button.prev {
+            left: 10px;
+        }
+        .carousel-button.next {
+            right: 10px;
+        }
+
+        /* Message Box Styling */
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none; /* Hidden by default */
+            text-align: center;
+            max-width: 300px;
+        }
+        .message-box button {
+            background-color: #ab20fd;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .message-box button:hover {
+            background-color: #6a0572;
+        }
+
+        /* Deal Badge Styling */
+        .deal-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #f59e0b; /* Amber color for "hot" deal */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px; /* Fully rounded */
+            font-weight: 700;
+            font-size: 0.875rem; /* text-sm */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            animation: pulse 1.5s infinite; /* Add pulse animation */
+            z-index: 11; /* Ensure badge is above timer if they overlap */
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Blurred Price Styling for SVG */
+        .blurred-price-svg {
+            display: block; /* Ensure it takes its own line */
+            width: 100px; /* Adjust width as needed for the blurred number */
+            height: 40px; /* Adjust height as needed */
+            margin-bottom: 0.5rem;
+            overflow: visible; /* Allow filter effects to extend */
+        }
+        .blurred-price-svg text {
+            font-family: 'Inter', sans-serif;
+            font-size: 2.25rem; /* text-4xl */
+            font-weight: 800; /* font-extrabold */
+            fill: #333; /* Text color */
+            user-select: none;
+            dominant-baseline: central; /* Vertically center text */
+            text-anchor: end; /* Align text to the right within its SVG space */
+        }
+
+        /* Credibility Section Styles */
+        .credibility-section {
+            background-color: #f8f8f8;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-top: 3rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        .credibility-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .credibility-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .credibility-item svg {
+            color: #ab20fd; /* Purple icon color */
+            margin-bottom: 0.75rem;
+        }
+        .credibility-item h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 0.5rem;
+        }
+        .credibility-item p {
+            font-size: 0.95rem;
+            color: #666;
+        }
+        .testimonial-card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .testimonial-card p {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 1rem;
+        }
+        .testimonial-card .author {
+            font-weight: 600;
+            color: #333;
+        }
+        .how-it-works-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background-color: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .how-it-works-step .step-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ab20fd;
+            margin-bottom: 0.5rem;
+        }
+        .how-it-works-step h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .how-it-works-step p {
+            font-size: 0.95rem;
+            color: #666;
+        }
+        /* Navigation Bar Styling */
+        .navbar {
+            background-color: #1a202c; /* Dark background for a sleek look */
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 0.75rem 0.75rem 0 0; /* Rounded top corners */
+            margin-bottom: 2rem; /* Space below the navbar */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .navbar .site-title {
+            color: #ffffff;
+            font-size: 1.75rem; /* text-2xl */
+            font-weight: 800; /* font-extrabold */
+            text-decoration: none;
+        }
+        .navbar .nav-links a {
+            color: #a0aec0; /* Light gray for links */
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 1.5rem;
+            transition: color 0.3s ease;
+        }
+        .navbar .nav-links a:hover {
+            color: #ffffff; /* White on hover */
+        }
+
+        /* Active Deals Count Styling */
+        .active-deals-count {
+            text-align: center;
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 700;
+            color: #4a5568; /* Gray-700 */
+            margin-bottom: 2rem;
+            padding: 0.5rem 1rem;
+            background-color: #e2e8f0; /* Gray-200 */
+            border-radius: 0.5rem;
+            display: inline-block; /* To make padding effective */
+        }
+
+        /* Countdown Timer Styling */
+        .countdown-timer {
+            position: absolute; /* Position absolutely within carousel-container */
+            top: 10px; /* 10px from top */
+            left: 10px; /* 10px from left */
+            font-size: 0.9rem; /* Slightly smaller for corner placement */
+            font-weight: 600;
+            color: white; /* White text for contrast */
+            background-color: rgba(239, 68, 68, 0.9); /* Semi-transparent red */
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.25rem;
+            z-index: 10; /* Ensure it's above the image */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .countdown-timer.expired {
+            color: #9ca3af; /* Gray-400 */
+            background-color: rgba(229, 231, 235, 0.9); /* Gray-200 semi-transparent */
+        }
+
+        /* Star Rating Styling */
+        .star-rating {
+            font-size: 1.1rem;
+            color: #f59e0b; /* Amber color for stars */
+            margin-top: 0.5rem; /* Space above the stars */
+            margin-bottom: 0.5rem; /* Space below the stars */
+        }
+        .star-rating span {
+            margin-right: 0.1rem;
+        }
+
+        /* Hotel Location Styling */
+        .hotel-location {
+            font-size: 0.95rem;
+            color: #666;
+            margin-top: -0.25rem; /* Pull up slightly to be closer to title */
+            margin-bottom: 0.5rem;
+        }
+
+        /* Visitors Count Styling */
+        .visitors-count-fixed {
+            position: fixed; /* Fixed position */
+            right: 20px; /* From right */
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white background */
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-size: 1rem;
+            font-weight: 600;
+            color: #4a5568;
+            z-index: 100; /* Ensure it's above other content */
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: top 0.5s ease-in-out; /* Smooth transition for movement */
+            /* Initial position (top right) */
+            top: 20px;
+        }
+        /* Scrolled position (bottom right) */
+        .visitors-count-fixed.scrolled {
+            top: calc(100vh - var(--visitors-height) - 20px); /* Move to bottom */
+        }
+
+        .visitors-count-fixed .dot {
+            width: 10px;
+            height: 10px;
+            background-color: #007bff; /* Blue dot to match new button */
+            border-radius: 50%;
+            animation: pulse-dot 1.5s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Micro-copy for button */
+        .private-price-text {
+            font-size: 0.85rem;
+            color: #555;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+
+        /* Filter/Sort Section Styling */
+        .filter-sort-section {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: flex-end; /* Align to the right */
+            align-items: center;
+            gap: 1rem;
+            padding: 0 1rem; /* Add some horizontal padding */
+        }
+        .filter-sort-section label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .filter-sort-section select {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: 1px solid #cbd5e0; /* Gray-300 */
+            background-color: #ffffff;
+            font-size: 0.95rem;
+            color: #2d3748; /* Gray-800 */
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .filter-sort-section select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <div class="container bg-white shadow-lg rounded-xl">
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <a href="#" class="site-title">VegasDeals.com</a>
+            <div class="nav-links">
+                <a href="#">Home</a>
+                <a href="#">About</a>
+                <a href="#">Contact</a>
+            </div>
+        </nav>
+
+        <div class="p-6 md:p-10"> <!-- Content wrapper to maintain padding after navbar -->
+
+            <!-- Active Deals Count -->
+            <div class="text-center mb-4">
+                <span class="active-deals-count" id="activeDealsCount">6 Active Deals in Las Vegas!</span>
+            </div>
+
+            <!-- Random Visitors Count (Fixed Position with Animation) -->
+            <div class="visitors-count-fixed" id="visitorsCount">
+                <span class="dot"></span>
+                <span class="visitors-text"></span>
+            </div>
+
+            <!-- Filter/Sort Section -->
+            <div class="filter-sort-section">
+                <label for="sort-by">Sort by:</label>
+                <select id="sort-by">
+                    <option value="default">Recommended</option>
+                    <option value="alpha-asc">Name (A-Z)</option>
+                    <option value="alpha-desc">Name (Z-A)</option>
+                    <option value="time-asc">Time Remaining (Soonest)</option>
+                    <option value="time-desc">Time Remaining (Longest)</option>
+                    <option value="stars-desc">Star Rating (High to Low)</option>
+                    <option value="stars-asc">Star Rating (Low to High)</option>
+                    <option value="deals-desc">Deals Left (Most to Least)</option>
+                    <option value="deals-asc">Deals Left (Least to Most)</option>
+                </select>
+            </div>
+
+            <!-- Hotel Listings List -->
+            <section class="flex flex-col gap-6" id="hotel-listings">
+            </section>
+
+            <!-- What Our Guests Say Section (Testimonials) -->
+            <section class="credibility-section mt-10">
+                <h2>What Our Guests Say</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="testimonial-card">
+                        <p>"I found an amazing deal on a luxury suite that I never would have found otherwise! This site is a game-changer for last-minute trips."</p>
+                        <div class="author">- Jessica L., New York</div>
+                    </div>
+                    <div class="testimonial-card">
+                        <p>"So easy to use and the 'Reveal Deals' button adds such a fun, mysterious touch. Got a fantastic rate for my Vegas getaway!"</p>
+                        <div class="author">- Mark T., California</div>
+                    </div>
+                    <div class="testimonial-card">
+                        <p>"Was skeptical at first, but the deal was real and the booking process was seamless. Highly recommend for spontaneous travelers!"</p>
+                        <div class="author">- Sarah P., Texas</div>
+                    </div>
+                    <div class="testimonial-card">
+                        <p>"The blurred prices really build anticipation! It felt like I was unlocking a secret discount. Great concept!"</p>
+                        <div class="author">- David R., Florida</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer Section -->
+            <footer class="text-center mt-10 text-gray-500 text-sm">
+                <p>&copy; 2025 Las Vegas Deals. All rights reserved. | <a href="#" class="text-blue-500 hover:underline">Privacy Policy</a></p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Message Box HTML -->
+    <div id="messageBox" class="message-box">
+        <p id="messageText"></p>
+        <button id="closeMessageBox">OK</button>
+    </div>
+
+    <script>
+        // Define a larger pool of potential hotels
+        const masterHotelList = [
+            {
+                id: "cosmopolitan",
+                name: "The Cosmopolitan",
+                location: "Las Vegas Strip",
+                description: "Experience luxury and vibrant nightlife at this iconic resort on the Las Vegas Strip, featuring unique dining, a world-class casino, and stunning views.",
+                stars: 5,
+                images: [
+                    "https://bellagio.mgmresorts.com/content/dam/MGM/bellagio/hotel/bellagio-hotel-exterior-hero.jpg", // Using Bellagio exterior as placeholder
+                    "https://cosmopolitanlasvegas.mgmresorts.com/content/dam/MGM/cosmopolitan/amenities/boulevard-pool/cosmopolitan-boulevard-pool-daybeds.jpg",
+                    "https://cosmopolitanlasvegas.mgmresorts.com/content/dam/MGM/cosmopolitan/hotel/terrace-one-bedroom-suite/cosmopolitan-terrace-one-bedroom-suite-living-room.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/the-cosmopolitan-of-las-vegas.html?aid=123456"
+            },
+            {
+                id: "bellagio",
+                name: "Bellagio",
+                location: "Las Vegas Strip",
+                description: "Indulge in timeless elegance at the Bellagio, famous for its dancing fountains, fine art gallery, and exquisite botanical gardens.",
+                stars: 5,
+                images: [
+                    "https://bellagio.mgmresorts.com/content/dam/MGM/bellagio/hotel/bellagio-hotel-exterior-hero.jpg",
+                    "https://bellagio.mgmresorts.com/content/dam/MGM/bellagio/amenities/pool/bellagio-pool-cabanas-daybeds.jpg",
+                    "https://bellagio.mgmresorts.com/content/dam/MGM/bellagio/hotel/fountain-view-king/bellagio-fountain-view-king-room.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/bellagio.html?aid=123456"
+            },
+            {
+                id: "caesars",
+                name: "Caesars Palace",
+                location: "Las Vegas Strip",
+                description: "Step into ancient Rome with modern luxury. Caesars Palace offers world-class entertainment, diverse dining, and opulent accommodations.",
+                stars: 5,
+                images: [
+                    "https://www.caesars.com/content/dam/clv/Hotel/caesars-palace-garden_of_the_gods-pool-oasis-hero.jpg",
+                    "https://www.caesars.com/content/dam/clv/Hotel/caesars-palace-garden_of_the_gods-pool-oasis-hero.jpg",
+                    "https://www.caesars.com/content/dam/clv/Hotel/caesars-palace-palace-tower-room-hero.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/caesars-palace.html?aid=123456"
+            },
+            {
+                id: "venetian",
+                name: "The Venetian Resort",
+                location: "Las Vegas Strip",
+                description: "Experience the romance of Venice with gondola rides, stunning architecture, and an expansive array of shops and restaurants.",
+                stars: 5,
+                images: [
+                    "https://www.venetianlasvegas.com/content/dam/venetian/resort/hotel/exterior/venetian-exterior-hero.jpg",
+                    "https://www.venetianlasvegas.com/content/dam/venetian/resort/pools/venetian-pool-deck-hero.jpg",
+                    "https://www.venetianlasvegas.com/content/dam/venetian/resort/hotel/suites/venetian-luxury-king-suite-living-room.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/the-venetian-resort-las-vegas.html?aid=123456"
+            },
+            {
+                id: "wynn",
+                name: "Wynn Las Vegas",
+                location: "Las Vegas Strip",
+                description: "A beacon of luxury and elegance, the Wynn offers exquisite dining, a championship golf course, and a serene spa experience.",
+                stars: 5,
+                images: [
+                    "https://www.wynnlasvegas.com/content/dam/wynn/hotel/wynn-las-vegas-exterior-hero.jpg",
+                    "https://www.wynnlasvegas.com/content/dam/wynn/experiences/pools/wynn-pool-daybeds.jpg",
+                    "https://www.wynnlasvegas.com/content/dam/wynn/hotel/rooms/wynn-resort-king-room.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/wynn-las-vegas.html?aid=123456"
+            },
+            {
+                id: "mgmgrand",
+                name: "MGM Grand",
+                location: "Las Vegas Strip",
+                description: "The 'City of Entertainment' offers a massive casino, thrilling shows, and a variety of dining and nightlife options for every taste.",
+                stars: 4,
+                images: [
+                    "https://mgmgrand.mgmresorts.com/content/dam/MGM/mgm-grand/hotel/mgm-grand-exterior-hero.jpg",
+                    "https://mgmgrand.mgmresorts.com/content/dam/MGM/mgm-grand/amenities/pool/mgm-grand-pool-complex-hero.jpg",
+                    "https://mgmgrand.mgmresorts.com/content/dam/MGM/mgm-grand/hotel/grand-king-room/mgm-grand-grand-king-room-bed.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/mgm-grand.html?aid=123456"
+            },
+            // Adding more unique hotels for rotation
+            {
+                id: "aria",
+                name: "ARIA Resort & Casino",
+                location: "Las Vegas Strip",
+                description: "Modern luxury and sustainable design meet vibrant entertainment and dining at the heart of CityCenter.",
+                stars: 5,
+                images: [
+                    "https://www.aria.com/content/dam/MGM/aria/hotel/aria-hotel-exterior-hero.jpg",
+                    "https://www.aria.com/content/dam/MGM/aria/amenities/pool/aria-pool-daybeds.jpg",
+                    "https://www.aria.com/content/dam/MGM/aria/hotel/deluxe-king-room/aria-deluxe-king-room-bed.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/aria-resort-casino.html?aid=123456"
+            },
+            {
+                id: "mandalaybay",
+                name: "Mandalay Bay",
+                location: "Las Vegas Strip",
+                description: "A tropical oasis with an 11-acre beach, wave pool, and shark reef aquarium, offering a unique resort experience.",
+                stars: 4,
+                images: [
+                    "https://www.mandalaybay.com/content/dam/MGM/mandalay-bay/hotel/mandalay-bay-hotel-exterior-hero.jpg",
+                    "https://www.mandalaybay.com/content/dam/MGM/mandalay-bay/amenities/beach/mandalay-bay-beach-wave-pool.jpg",
+                    "https://www.mandalaybay.com/content/dam/MGM/mandalay-bay/hotel/resort-king-room/mandalay-bay-resort-king-room-bed.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/mandalay-bay-resort-casino.html?aid=123456"
+            },
+            {
+                id: "mirage",
+                name: "The Mirage",
+                location: "Las Vegas Strip",
+                description: "Known for its iconic volcano and tropical environment, The Mirage offers a vibrant casino, diverse dining, and entertainment.",
+                stars: 4,
+                images: [
+                    "https://www.mirage.com/content/dam/MGM/mirage/hotel/mirage-hotel-exterior-hero.jpg",
+                    "https://www.mirage.com/content/dam/MGM/mirage/amenities/pool/mirage-pool-daybeds.jpg",
+                    "https://www.mirage.com/content/dam/MGM/mirage/hotel/resort-king-room/mirage-resort-king-room-bed.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/the-mirage-hotel-casino.html?aid=123456"
+            },
+            {
+                id: "luxor",
+                name: "Luxor Hotel & Casino",
+                location: "Las Vegas Strip",
+                description: "An iconic pyramid-shaped hotel with a unique Egyptian theme, offering spacious rooms, pools, and entertainment.",
+                stars: 3,
+                images: [
+                    "https://www.luxor.com/content/dam/MGM/luxor/hotel/luxor-hotel-exterior-hero.jpg",
+                    "https://www.luxor.com/content/dam/MGM/luxor/amenities/pool/luxor-pool-daybeds.jpg",
+                    "https://www.luxor.com/content/dam/MGM/luxor/hotel/pyramid-deluxe-king/luxor-pyramid-deluxe-king-room-bed.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/luxor-hotel-casino.html?aid=123456"
+            },
+            {
+                id: "excalibur",
+                name: "Excalibur Hotel & Casino",
+                location: "Las Vegas Strip",
+                description: "A medieval-themed resort offering family-friendly entertainment, a large pool deck, and a fun atmosphere.",
+                stars: 3,
+                images: [
+                    "https://www.excalibur.com/content/dam/MGM/excalibur/hotel/excalibur-hotel-exterior-hero.jpg",
+                    "https://www.excalibur.com/content/dam/MGM/excalibur/amenities/pool/excalibur-pool-daybeds.jpg",
+                    "https://www.excalibur.com/content/dam/MGM/excalibur/hotel/resort-king-room/excalibur-resort-king-room-bed.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/excalibur-hotel-casino.html?aid=123456"
+            },
+            {
+                id: "newyorknewyork",
+                name: "New York-New York",
+                location: "Las Vegas Strip",
+                description: "Experience the iconic New York City skyline, complete with a roller coaster and diverse dining options.",
+                stars: 4,
+                images: [
+                    "https://www.newyorknewyork.com/content/dam/MGM/new-york-new-york/hotel/new-york-new-york-hotel-exterior-hero.jpg",
+                    "https://www.newyorknewyork.com/content/dam/MGM/new-york-new-york/amenities/pool/new-york-new-york-pool-daybeds.jpg",
+                    "https://www.newyorknewyork.com/content/dam/MGM/new-york-new-york/hotel/park-avenue-king/new-york-new-york-park-avenue-king-room-bed.jpg"
+                ],
+                affiliateLink: "https://www.booking.com/hotel/us/new-york-new-york-hotel-casino.html?aid=123456"
+            }
+        ];
+
+        // Function to show a custom message box
+        function showMessageBox(message) {
+            const messageBox = document.getElementById('messageBox');
+            const messageText = document.getElementById('messageText');
+            messageText.textContent = message;
+            messageBox.style.display = 'block';
+        }
+
+        // Function to hide the custom message box
+        function hideMessageBox() {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.style.display = 'none';
+        }
+
+        // Global array to keep track of currently active hotel IDs
+        let activeHotelIds = [];
+        // Available hotels for new deals (initially all master hotels)
+        let availableNewHotels = [...masterHotelList]; // Copy of master list
+        const hotelListingsSection = document.getElementById('hotel-listings');
+        const activeDealsCountElement = document.getElementById('activeDealsCount');
+
+        // Function to generate a random end time for a deal (within 3 hours from now)
+        function getRandomEndTime() {
+            const now = new Date();
+            // Ensure end time is at least 2 minutes (120 seconds) in the future + up to 3 hours
+            const futureTime = new Date(now.getTime() + 120 * 1000 + Math.random() * 3 * 60 * 60 * 1000);
+            return futureTime.toISOString();
+        }
+
+        // Function to generate a random blurred price
+        function getRandomBlurredPrice() {
+            const price = Math.floor(Math.random() * (400 - 100 + 1)) + 100; // Price between $100 and $400
+            return `$${price}`;
+        }
+
+        // Function to create a new hotel card element
+        function createHotelCardElement(hotel) {
+            const hotelCard = document.createElement('div');
+            hotelCard.classList.add('hotel-card');
+            hotelCard.id = `hotel-${hotel.id}`; // Add ID for easy targeting
+
+            const starSpans = Array(hotel.stars).fill('<span>&#9733;</span>').join('');
+
+            hotelCard.innerHTML = `
+                <div class="missed-overlay">Deal Expired</div>
+                <span class="deal-badge" data-hotel-id="${hotel.id}"></span>
+                <div class="carousel-container" id="${hotel.id}-carousel">
+                    <span class="countdown-timer" data-end-time="${getRandomEndTime()}"></span>
+                    <div class="carousel-track">
+                        ${hotel.images.map(imgSrc => `<img src="${imgSrc}" onerror="this.onerror=null;this.src='https://placehold.co/600x350/cccccc/333333?text=${hotel.name.replace(/\s/g, '+')}+Image';" alt="${hotel.name} Image">`).join('')}
+                    </div>
+                    <button class="carousel-button prev">&#x2039;</button>
+                    <button class="carousel-button next">&#x203A;</button>
+                </div>
+                <div class="content flex flex-col justify-between h-full">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-0">${hotel.name}</h2>
+                        <p class="hotel-location">${hotel.location}</p>
+                        <p class="text-gray-600 mb-2 text-sm">
+                            ${hotel.description}
+                        </p>
+                        <div class="star-rating">
+                            ${starSpans}
+                        </div>
+                    </div>
+                    <div class="actions mt-auto flex flex-col items-center md:items-end">
+                        <svg class="blurred-price-svg" viewBox="0 0 100 40">
+                            <defs>
+                                <filter id="blurFilter">
+                                    <feGaussianBlur in="SourceGraphic" stdDeviation="8" />
+                                </filter>
+                            </defs>
+                            <text x="95" y="20" filter="url(#blurFilter)">${getRandomBlurredPrice()}</text>
+                        </svg>
+                        <button class="reveal-button" data-affiliate-link="${hotel.affiliateLink}">
+                            Reveal Deals
+                        </button>
+                    </div>
+                </div>
+            `;
+            return hotelCard;
+        }
+
+        // Function to initialize dynamic elements for a single hotel card
+        function initializeCardDynamics(cardElement) {
+            // Initialize carousel
+            const carouselContainer = cardElement.querySelector('.carousel-container');
+            if (carouselContainer) {
+                const track = carouselContainer.querySelector('.carousel-track');
+                const slides = Array.from(track.children);
+                const nextButton = carouselContainer.querySelector('.carousel-button.next');
+                const prevButton = carouselContainer.querySelector('.carousel-button.prev');
+                let currentIndex = 0;
+
+                const updateCarousel = () => {
+                    track.style.transform = 'translateX(-' + currentIndex * 100 + '%)';
+                };
+
+                nextButton.addEventListener('click', () => {
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    updateCarousel();
+                });
+
+                prevButton.addEventListener('click', () => {
+                    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+                    updateCarousel();
+                });
+
+                // Clear any existing interval before setting a new one
+                if (carouselContainer.dataset.intervalId) {
+                    clearInterval(parseInt(carouselContainer.dataset.intervalId));
+                }
+                const newIntervalId = setInterval(() => {
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    updateCarousel();
+                }, 5000);
+                carouselContainer.dataset.intervalId = newIntervalId.toString(); // Store interval ID
+                updateCarousel();
+            }
+
+            // Initialize countdown timer
+            const timerElement = cardElement.querySelector('.countdown-timer');
+            if (timerElement) {
+                // Ensure the end time is set for new deals
+                if (!timerElement.dataset.endTime) {
+                    timerElement.dataset.endTime = getRandomEndTime();
+                }
+                updateCountdownForElement(timerElement); // Initial update
+            }
+
+            // Initialize deals left badge
+            const badgeElement = cardElement.querySelector('.deal-badge');
+            if (badgeElement) {
+                let initialDeals;
+                let isUnique = false;
+                let attempts = 0;
+                const maxAttempts = 50; // Prevent infinite loop if too many deals or too small range
+
+                while (!isUnique && attempts < maxAttempts) {
+                    initialDeals = Math.floor(Math.random() * (12 - 1 + 1)) + 1; // Random between 1 and 12
+                    // Apply a bias towards less than 5
+                    if (initialDeals > 5 && Math.random() < 0.6) { // 60% chance to pull higher numbers down
+                        initialDeals = Math.floor(Math.random() * 4) + 1; // Recalculate between 1 and 4
+                    }
+                    // Check if this number is already active
+                    const activeBadges = document.querySelectorAll('.deal-badge:not([data-deals-left="0"])');
+                    isUnique = true;
+                    activeBadges.forEach(activeBadge => {
+                        if (parseInt(activeBadge.dataset.dealsLeft) === initialDeals) {
+                            isUnique = false;
+                        }
+                    });
+                    attempts++;
+                }
+                // If after many attempts, a unique number isn't found, just assign a random one (might be duplicate)
+                if (!isUnique) {
+                    initialDeals = Math.floor(Math.random() * (12 - 1 + 1)) + 1;
+                    console.warn("Could not find a unique 'deals left' number after many attempts. Assigning a random one.");
+                }
+
+                badgeElement.dataset.dealsLeft = initialDeals.toString(); // Store as data attribute
+                badgeElement.textContent = `⚡️ ${initialDeals} Left!`;
+            }
+
+            // Attach reveal button listener
+            const revealButton = cardElement.querySelector('.reveal-button');
+            if (revealButton) {
+                revealButton.addEventListener('click', () => {
+                    const affiliateLink = revealButton.dataset.affiliateLink;
+                    if (affiliateLink) {
+                        window.location.href = affiliateLink;
+                    } else {
+                        showMessageBox('Oops! Deal link not available for this moment. Please try another.');
+                    }
+                });
+            }
+        }
+
+        // Global variable to track the last time a deal was truly removed
+        let lastDealRemovedTime = new Date().getTime(); // Initialize to current time
+
+        // Function to update a single countdown element
+        function updateCountdownForElement(timerElement) {
+            // If this timer has already expired and been marked, skip further updates
+            if (timerElement.dataset.expired === 'true') {
+                return;
+            }
+
+            const endTimeString = timerElement.dataset.endTime;
+            const endTime = new Date(endTimeString).getTime();
+            const now = new Date().getTime();
+            const distance = endTime - now;
+            const hotelCard = timerElement.closest('.hotel-card');
+            const revealButton = hotelCard.querySelector('.reveal-button');
+
+            if (distance < 0) {
+                // Mark this timer as expired so it stops counting down
+                timerElement.dataset.expired = 'true'; // Mark as expired
+                timerElement.innerHTML = "Deal Expired!"; // Set text to "Deal Expired!"
+                timerElement.classList.add('expired'); // Apply expired styling
+                
+                // Check if the card is NOT already marked as deal-missed or expired-hidden
+                if (!hotelCard.classList.contains('deal-missed') && !hotelCard.classList.contains('expired-hidden')) {
+                    hotelCard.classList.add('deal-missed'); // Add class to show missed overlay
+                    if (revealButton) {
+                        revealButton.disabled = true;
+                        revealButton.classList.add('disabled-button');
+                    }
+
+                    // This card is now pending removal by processExpiredDealsQueue
+                    // The actual removal will be handled by processExpiredDealsQueue with the 90s delay
+                }
+            } else {
+                // If the deal is still active, update the countdown
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                timerElement.innerHTML = `Ends in: ${hours}h ${minutes}m ${seconds}s`;
+            }
+        }
+
+        // Function to add a new random hotel deal
+        function addNewDeal() {
+            const currentDisplayedIds = Array.from(document.querySelectorAll('.hotel-card:not(.expired-hidden)'))
+                                            .map(card => card.id.replace('hotel-', ''));
+
+            // Create a temporary list of hotels not currently displayed
+            let potentialNewHotels = masterHotelList.filter(hotel =>
+                !currentDisplayedIds.includes(hotel.id)
+            );
+
+            // If we've exhausted all unique hotels, reset the pool of available hotels
+            if (potentialNewHotels.length === 0) {
+                console.log("All unique hotels displayed. Resetting pool for new deals.");
+                potentialNewHotels = [...masterHotelList];
+                // Filter again to ensure we don't pick an already active one immediately after reset
+                potentialNewHotels = potentialNewHotels.filter(hotel =>
+                    !currentDisplayedIds.includes(hotel.id)
+                );
+            }
+
+            if (potentialNewHotels.length === 0) {
+                console.warn("No unique hotels available to add even after resetting pool.");
+                return null; // Cannot add a new deal if no unique hotels are left
+            }
+
+            const randomIndex = Math.floor(Math.random() * potentialNewHotels.length);
+            const newHotelData = potentialNewHotels[randomIndex];
+
+            const newHotelCard = createHotelCardElement(newHotelData);
+            hotelListingsSection.appendChild(newHotelCard); // Append to the listings section
+
+            // Initialize dynamic elements for the new card
+            initializeCardDynamics(newHotelCard);
+
+            return newHotelData.id;
+        }
+
+
+        // Function to manage the number of active deals
+        function manageActiveDeals() {
+            const hotelCards = document.querySelectorAll('.hotel-card:not(.deal-missed):not(.expired-hidden)');
+            let currentActiveDeals = hotelCards.length;
+            activeDealsCountElement.textContent = `${currentActiveDeals} Active Deals in Las Vegas!`;
+
+            const minDeals = 5;
+            const maxDeals = 8;
+
+            // Add new deals if below minimum
+            while (currentActiveDeals < minDeals) {
+                const addedId = addNewDeal();
+                if (addedId) {
+                    currentActiveDeals++;
+                } else {
+                    break; // No more unique hotels to add
+                }
+            }
+            activeDealsCountElement.textContent = `${currentActiveDeals} Active Deals in Las Vegas!`;
+        }
+
+        // New function to process expired deals from the queue
+        function processExpiredDealsQueue() {
+            const now = new Date().getTime();
+            const timeSinceLastRemoval = now - lastDealRemovedTime;
+            const minTimeBetweenRemovals = 90 * 1000; // 90 seconds
+
+            if (timeSinceLastRemoval >= minTimeBetweenRemovals) {
+                const expiredCards = document.querySelectorAll('.hotel-card.deal-missed:not(.expired-hidden)');
+                if (expiredCards.length > 0) {
+                    const cardToRemove = expiredCards[0]; // Take the oldest missed card
+                    cardToRemove.classList.add('expired-hidden'); // Start fade out and collapse
+
+                    setTimeout(() => {
+                        if (cardToRemove.parentNode) {
+                            cardToRemove.remove();
+                            lastDealRemovedTime = new Date().getTime(); // Update last removal time
+                            manageActiveDeals(); // Add new deal and update count
+                        }
+                    }, 500); // Match CSS transition duration for expired-hidden
+                }
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const closeMessageBoxButton = document.getElementById('closeMessageBox');
+            const sortBySelect = document.getElementById('sort-by');
+
+            // Close message box when OK is clicked
+            if (closeMessageBoxButton) {
+                closeMessageBoxButton.addEventListener('click', hideMessageBox);
+            }
+
+            // Initial population of deals (5-8 deals)
+            const initialDealCount = Math.floor(Math.random() * (8 - 5 + 1)) + 5;
+            
+            for (let i = 0; i < initialDealCount; i++) {
+                const addedId = addNewDeal(); // Use addNewDeal which now ensures active deals
+                if (!addedId) { // Break if no active unique deals can be added
+                    break;
+                }
+            }
+
+            // Immediately check and remove any deals that might have expired *before* the page fully loaded
+            // This prevents "Deal Expired" showing on fresh load
+            document.querySelectorAll('.hotel-card').forEach(card => {
+                const timerElement = card.querySelector('.countdown-timer');
+                const dealsLeftBadge = card.querySelector('.deal-badge'); // Get the deals left badge
+                const dealsLeft = dealsLeftBadge ? parseInt(dealsLeftBadge.dataset.dealsLeft) : 1; // Default to 1 if not set
+                const endTime = new Date(timerElement.dataset.endTime).getTime();
+                const now = new Date().getTime();
+
+                // If expired by time or deals left, remove immediately without animation
+                if (endTime < now || dealsLeft === 0) {
+                    card.remove();
+                }
+            });
+
+            manageActiveDeals(); // Final management call to ensure correct count and fill up if needed
+
+
+            // Set up interval for all countdown timers
+            setInterval(() => {
+                // Iterate over active timers to update them
+                document.querySelectorAll('.countdown-timer').forEach(timerElement => {
+                    updateCountdownForElement(timerElement);
+                });
+            }, 1000);
+
+            // Set up interval to process expired deals from the queue
+            setInterval(processExpiredDealsQueue, 5000); // Check every 5 seconds
+
+
+            // Update "Deals Left" badge
+            function updateDealsLeft() {
+                // Re-query deal badges to include newly added ones
+                document.querySelectorAll('.deal-badge').forEach(badge => {
+                    let currentDeals = parseInt(badge.dataset.dealsLeft);
+                    const hotelCard = badge.closest('.hotel-card'); // Get parent card
+                    const revealButton = hotelCard.querySelector('.reveal-button');
+                    const timerElement = hotelCard.querySelector('.countdown-timer'); // Get timer element
+
+                    // Only decrement if the deal is not expired and not already 0
+                    if (hotelCard && !hotelCard.classList.contains('deal-missed') && currentDeals > 0) {
+                        currentDeals--;
+                        badge.dataset.dealsLeft = currentDeals.toString(); // Update the data attribute
+                    }
+
+                    if (currentDeals === 0) {
+                        badge.textContent = `Sold Out!`; // Display "Sold Out!" without emoji
+                        if (hotelCard && !hotelCard.classList.contains('deal-missed')) { // Only mark if not already marked
+                            hotelCard.classList.add('deal-missed'); // Show missed overlay
+                            if (revealButton) {
+                                revealButton.disabled = true;
+                                revealButton.classList.add('disabled-button');
+                            }
+                            // Also update the countdown timer immediately when dealsLeft hits 0
+                            if (timerElement) {
+                                timerElement.dataset.expired = 'true';
+                                timerElement.innerHTML = "Deal Expired!";
+                                timerElement.classList.add('expired');
+                            }
+                            // This card is now pending removal by processExpiredDealsQueue
+                        }
+                    } else {
+                        badge.textContent = `⚡️ ${currentDeals} Left!`; // Update the displayed text
+                    }
+                });
+                // After updating all badges, schedule the next update with a random delay
+                const randomDelay = Math.floor(Math.random() * (40000 - 20000 + 1)) + 20000; // 20 to 40 seconds
+                setTimeout(updateDealsLeft, randomDelay);
+            }
+            // Initial call for deals left update
+            updateDealsLeft();
+
+
+            // Update Random Visitors Count
+            let currentVisitors = Math.floor(Math.random() * (107 - 15 + 1)) + 15; // Initial random value within range
+            const visitorsCountElement = document.getElementById('visitorsCount');
+            const visitorsCountTextSpan = visitorsCountElement.querySelector('.visitors-text');
+
+            function updateVisitorsCount() {
+                const change = Math.floor(Math.random() * 2) + 1; // +1 or +2
+                const direction = Math.random() < 0.5 ? 1 : -1; // Randomly go up or down
+                currentVisitors += (change * direction);
+
+                // Enforce ceiling and floor
+                if (currentVisitors > 107) {
+                    currentVisitors = 107;
+                } else if (currentVisitors < 15) {
+                    currentVisitors = 15;
+                }
+
+                visitorsCountTextSpan.textContent = `${currentVisitors} other visitors currently viewing deals!`;
+            }
+
+            // Update with variable rate (random interval)
+            function setRandomIntervalForVisitors() {
+                const randomInterval = Math.floor(Math.random() * (5000 - 3000 + 1)) + 3000; // 3 to 5 seconds
+                setTimeout(() => {
+                    updateVisitorsCount();
+                    setRandomIntervalForVisitors(); // Call itself to loop with new random interval
+                }, randomInterval);
+            }
+
+            updateVisitorsCount(); // Initial call
+            setRandomIntervalForVisitors(); // Start the dynamic interval
+
+            // Scroll event listener for visitors count position
+            let hasScrolledDown = false; // Flag to ensure animation plays once down
+            let hasScrolledUp = true; // Flag to ensure animation plays once up (starts at top)
+            let visitorsInitialTop = 20; // Initial top position
+            let visitorsBottomTarget = 0; // Will be calculated
+
+            // Calculate visitorsBottomTarget on load and resize
+            function calculateVisitorsBottomTarget() {
+                const visitorsHeight = visitorsCountElement.offsetHeight;
+                visitorsBottomTarget = window.innerHeight - visitorsHeight - 20; // 20px from bottom
+                // Set initial top position immediately after calculation to ensure it's correct
+                if (!hasScrolledDown && hasScrolledUp) { // Only if at top and not scrolled down yet
+                    visitorsCountElement.style.top = `${visitorsInitialTop}px`;
+                }
+            }
+
+            // Initial calculation
+            calculateVisitorsBottomTarget();
+            // Recalculate on window resize
+            window.addEventListener('resize', calculateVisitorsBottomTarget);
+
+
+            window.addEventListener('scroll', () => {
+                const scrollY = window.scrollY;
+
+                // Scrolling down: if not already scrolled down and scroll position is past a threshold
+                if (scrollY > 50 && !hasScrolledDown) { /* 50px threshold to trigger animation */
+                    visitorsCountElement.style.top = `${visitorsBottomTarget}px`;
+                    hasScrolledDown = true;
+                    hasScrolledUp = false; // Reset up scroll flag
+                }
+                // Scrolling back to top: if not already scrolled up and scroll position is near top
+                else if (scrollY < 50 && !hasScrolledUp) { /* 50px threshold to trigger animation back to top */
+                    visitorsCountElement.style.top = `${visitorsInitialTop}px`;
+                    hasScrolledUp = true;
+                    hasScrolledDown = false; // Reset down scroll flag
+                }
+            });
+
+            // Sorting functionality
+            sortBySelect.addEventListener('change', (event) => {
+                const sortType = event.target.value;
+                const hotelCards = Array.from(document.querySelectorAll('.hotel-card:not(.expired-hidden)'));
+
+                hotelCards.sort((a, b) => {
+                    if (sortType === 'alpha-asc') {
+                        const nameA = a.querySelector('h2').textContent;
+                        const nameB = b.querySelector('h2').textContent;
+                        return nameA.localeCompare(nameB);
+                    } else if (sortType === 'alpha-desc') {
+                        const nameA = a.querySelector('h2').textContent;
+                        const nameB = b.querySelector('h2').textContent;
+                        return nameB.localeCompare(nameA);
+                    } else if (sortType === 'time-asc') {
+                        const timeA = new Date(a.querySelector('.countdown-timer').dataset.endTime).getTime();
+                        const timeB = new Date(b.querySelector('.countdown-timer').dataset.endTime).getTime();
+                        return timeA - timeB; // Soonest first
+                    } else if (sortType === 'time-desc') {
+                        const timeA = new Date(a.querySelector('.countdown-timer').dataset.endTime).getTime();
+                        const timeB = new Date(b.querySelector('.countdown-timer').dataset.endTime).getTime();
+                        return timeB - timeA; // Longest remaining first
+                    } else if (sortType === 'stars-desc') {
+                        const starsA = a.querySelectorAll('.star-rating span').length;
+                        const starsB = b.querySelectorAll('.star-rating span').length;
+                        return starsB - starsA; // High to Low
+                    } else if (sortType === 'stars-asc') {
+                        const starsA = a.querySelectorAll('.star-rating span').length;
+                        const starsB = b.querySelectorAll('.star-rating span').length;
+                        return starsA - starsB; // Low to High
+                    } else if (sortType === 'deals-desc') {
+                        const dealsA = parseInt(a.querySelector('.deal-badge').dataset.dealsLeft);
+                        const dealsB = parseInt(b.querySelector('.deal-badge').dataset.dealsLeft);
+                        return dealsB - dealsA; // Most to Least
+                    } else if (sortType === 'deals-asc') {
+                        const dealsA = parseInt(a.querySelector('.deal-badge').dataset.dealsLeft);
+                        const dealsB = parseInt(b.querySelector('.deal-badge').dataset.dealsLeft);
+                        return dealsA - dealsB; // Least to Most
+                    }
+                    // Default or 'recommended' - keep current order (or original order if tracked)
+                    return 0;
+                });
+
+                // Re-append sorted cards to the DOM
+                hotelCards.forEach(card => hotelListingsSection.appendChild(card));
+            });
+        });
+    </script>
+</body>
+</html>
