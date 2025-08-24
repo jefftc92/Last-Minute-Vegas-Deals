@@ -1,6 +1,10 @@
-# Last Minute Vegas Deals
+# TravelHen.com - Last Minute Vegas Deals
 
-A comprehensive travel platform combining last-minute Las Vegas hotel deals with an interactive hotel recommendation quiz.
+**Official TravelHen.com Project** - A comprehensive travel platform combining last-minute Las Vegas hotel deals with an interactive hotel recommendation quiz.
+
+## 🌟 About TravelHen.com
+
+This is the official **TravelHen.com** project for Las Vegas last-minute hotel deals. TravelHen.com is your trusted source for finding the best last-minute travel deals and personalized hotel recommendations.
 
 ## 🌟 Features
 
@@ -159,12 +163,18 @@ Las Vegas Last Minute/
 
 ## 📄 License
 
-This project is proprietary and confidential. All rights reserved by TravelHen.com.
+This project is proprietary and confidential. All rights reserved by **TravelHen.com**.
 
 ## 🤝 Support
 
 For technical support or questions about the platform, please refer to the Terms of Service and Privacy Policy sections of the website.
 
+## 🌐 Official Website
+
+**Visit [TravelHen.com](https://travelhen.com)** for the live version of this platform and more travel deals.
+
 ---
 
-**TravelHen.com** - Your comprehensive Las Vegas travel companion 
+**TravelHen.com** - Your comprehensive Las Vegas travel companion
+
+*This repository contains the official TravelHen.com Las Vegas deals platform code.* 
