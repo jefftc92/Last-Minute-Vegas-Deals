@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelHen.com - Vegas Deals & Quiz</title>
+    <style>
+        :root {
+            --primary-color: #1e40af;
+            --secondary-color: #dc2626;
+            --accent-color: #f59e0b;
+            --text-color: #1f2937;
+            --light-text: #6b7280;
+            --background: #ffffff;
+            --card-bg: #f8fafc;
+            --border: #e5e7eb;
+            --radius: 8px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: var(--background);
+        }
+
+        /* Navigation */
+        .nav-container {
+            background: linear-gradient(135deg, var(--primary-color), #1e3a8a);
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-tab {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab:hover,
+        .nav-tab.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Deals Section */
+        .deals-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .deals-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .deals-title {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .deals-subtitle {
+            font-size: 1.2rem;
+            color: var(--light-text);
+        }
+
+        /* Quiz Section */
+        .quiz-section {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .quiz-title {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .quiz-subtitle {
+            font-size: 1.2rem;
+            color: var(--light-text);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .deals-title,
+            .quiz-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Deals Section Styles */
+        .deals-wrapper {
+            position: relative;
+        }
+
+        .visitors-count {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: rgba(30, 64, 175, 0.9);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+
+        .filter-sort-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+
+        .active-deals-count {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .sort-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sort-controls label {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .sort-controls select {
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: white;
+            color: var(--text-color);
+        }
+
+        .hotel-listings {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .hotel-card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hotel-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .hotel-image-container {
+            position: relative;
+            height: 250px;
+            overflow: hidden;
+        }
+
+        .hotel-carousel {
+            position: relative;
+            height: 100%;
+        }
+
+        .hotel-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .hotel-image.active {
+            opacity: 1;
+        }
+
+        .carousel-controls {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .carousel-btn {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background 0.3s ease;
+        }
+
+        .carousel-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .countdown-timer {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(17, 24, 39, 0.9);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 0.9rem;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .hotel-info {
+            padding: 1.5rem;
+        }
+
+        .hotel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .hotel-name {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .hotel-rating {
+            color: var(--accent-color);
+            font-size: 1.2rem;
+        }
+
+        .hotel-location {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: var(--light-text);
+        }
+
+        .hotel-amenities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .amenity-tag {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .hotel-pricing {
+            margin-bottom: 1.5rem;
+        }
+
+        .price-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .current-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        .original-price {
+            font-size: 1rem;
+            color: var(--light-text);
+            text-decoration: line-through;
+        }
+
+        .savings {
+            font-size: 0.9rem;
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .hotel-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .deals-left-badge {
+            background: var(--accent-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .reveal-deals-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .reveal-deals-btn:hover {
+            background: #1e3a8a;
+        }
+
+        .testimonials-section {
+            margin-top: 3rem;
+        }
+
+        .testimonials-title {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .testimonial-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        /* Quiz Section Styles */
+        .quiz-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .quiz-container h1 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .title-accent {
+            width: 60px;
+            height: 4px;
+            background: var(--accent-color);
+            margin: 0 auto 2rem;
+            border-radius: 2px;
+        }
+
+        .intro {
+            font-size: 1.1rem;
+            color: var(--light-text);
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 2rem;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid var(--border);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .result-content {
+            text-align: left;
+        }
+
+        .result-content h3 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-description {
+            font-size: 1.1rem;
+            color: var(--light-text);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .result-features h4 {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .result-features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .result-features li {
+            background: var(--card-bg);
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .restart-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 2rem;
+            transition: background 0.3s ease;
+        }
+
+        .restart-btn:hover {
+            background: #1e3a8a;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <div class="nav-content">
+            <a href="#" class="logo">TravelHen.com</a>
+            <div class="nav-tabs">
+                <a href="#" class="nav-tab active" data-section="deals">Vegas Deals</a>
+                <a href="#" class="nav-tab" data-section="quiz">Vegas Quiz</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content Sections -->
+    <section id="deals" class="content-section active">
+        <div class="deals-section">
+            <div class="deals-header">
+                <h1 class="deals-title">Last Minute Vegas Deals</h1>
+                <p class="deals-subtitle">Find the best hotel deals in Las Vegas before they're gone!</p>
+            </div>
+            <div id="deals-content">
+                <p>Loading deals...</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz" class="content-section">
+        <div class="quiz-section">
+            <div class="quiz-header">
+                <h1 class="quiz-title">Which Vegas Hotel is Right for You?</h1>
+                <p class="quiz-subtitle">Take our quiz to find your perfect Las Vegas hotel match!</p>
+            </div>
+            <div id="quiz-content">
+                <p>Loading quiz...</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Navigation functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const navTabs = document.querySelectorAll('.nav-tab');
+            const contentSections = document.querySelectorAll('.content-section');
+            
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all tabs and sections
+                    navTabs.forEach(t => t.classList.remove('active'));
+                    contentSections.forEach(s => s.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Show corresponding content section
+                    const targetSection = this.getAttribute('data-section');
+                    document.getElementById(targetSection).classList.add('active');
+                    
+                    // Load content if not already loaded
+                    loadSectionContent(targetSection);
+                });
+            });
+
+            // Load initial content
+            loadSectionContent('deals');
+        });
+
+        // Load section content
+        function loadSectionContent(section) {
+            if (section === 'deals') {
+                loadDealsContent();
+            } else if (section === 'quiz') {
+                loadQuizContent();
+            }
+        }
+
+        // Load deals content
+        function loadDealsContent() {
+            const dealsContent = document.getElementById('deals-content');
+            if (dealsContent.innerHTML === '<p>Loading deals...</p>') {
+                // Load the actual Vegas deals content
+                dealsContent.innerHTML = `
+                    <div class="deals-wrapper">
+                        <!-- Visitors Count (Fixed Position) -->
+                        <div class="visitors-count" id="visitorsCount" aria-live="polite">
+                            <span class="visitors-text"></span>
+                        </div>
+
+                        <!-- Filter/Sort Section -->
+                        <div class="filter-sort-section">
+                            <!-- Active Deals Count -->
+                            <span class="active-deals-count" id="activeDealsCount" aria-live="polite">
+                                4 Active Deals in Las Vegas!
+                            </span>
+                            
+                            <!-- Sort Controls Group -->
+                            <div class="sort-controls">
+                                <label for="sort-by">Sort by:</label>
+                                <select id="sort-by" aria-label="Sort hotel deals">
+                                    <option value="default">Recommended</option>
+                                    <option value="alpha-asc">Name (A-Z)</option>
+                                    <option value="alpha-desc">Name (Z-A)</option>
+                                    <option value="time-asc">Time Remaining (Soonest)</option>
+                                    <option value="time-desc">Time Remaining (Longest)</option>
+                                    <option value="stars-desc">Star Rating (High to Low)</option>
+                                    <option value="stars-asc">Star Rating (Low to High)</option>
+                                    <option value="deals-desc">Deals Left (Most to Least)</option>
+                                    <option value="deals-asc">Deals Left (Least to Most)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Hotel Listings -->
+                        <section class="hotel-listings" id="hotel-listings" aria-label="Available hotel deals">
+                            <!-- Hotel cards will be dynamically inserted here -->
+                        </section>
+
+                        <!-- Testimonials Section -->
+                        <section class="testimonials-section" aria-labelledby="testimonials-title">
+                            <h2 class="testimonials-title" id="testimonials-title">What Our Guests Say</h2>
+                            <div class="testimonials-grid">
+                                <div class="testimonial-card">
+                                    <p class="testimonial-text">"I found an amazing deal on a luxury suite that I never would have found otherwise! This site is a game-changer for last-minute trips."</p>
+                                    <div class="testimonial-author">- Jessica L., New York</div>
+                                </div>
+                                <div class="testimonial-card">
+                                    <p class="testimonial-text">"Found a luxury suite at the Bellagio for 60% off! Saved over $800 on my Vegas trip. This site is incredible for last-minute deals!"</p>
+                                    <div class="testimonial-author">- Mark T., California</div>
+                                </div>
+                                <div class="testimonial-card">
+                                    <p class="testimonial-text">"Scored a 5-star room at Caesars Palace for less than a 3-star hotel would cost elsewhere. The deals here are unreal!"</p>
+                                    <div class="testimonial-author">- Sarah P., Texas</div>
+                                </div>
+                                <div class="testimonial-card">
+                                    <p class="testimonial-text">"Got upgraded to a penthouse suite at the Wynn for the same price as a standard room. These last-minute deals are absolutely incredible!"</p>
+                                    <div class="testimonial-author">- David R., Florida</div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                `;
+                
+                // Initialize deals functionality
+                initializeDeals();
+            }
+        }
+
+        // Load quiz content
+        function loadQuizContent() {
+            const quizContent = document.getElementById('quiz-content');
+            if (quizContent.innerHTML === '<p>Loading quiz...</p>') {
+                // Load the quiz content directly
+                quizContent.innerHTML = `
+                    <div class="quiz-container">
+                        <h1>WHICH LAS VEGAS HOTEL IS RIGHT FOR YOU?</h1>
+                        <div class="title-accent"></div>
+                        
+                        <div class="intro">
+                            Take our fun quiz to discover the perfect Las Vegas hotel for your next adventure!
+                            Answer a few questions and we'll match you with your ideal stay.
+                        </div>
+
+                        <div class="quiz-content">
+                            <div id="question-container">
+                                <!-- Questions will be loaded here -->
+                            </div>
+                            
+                            <div id="result-container" style="display: none;">
+                                <!-- Results will be shown here -->
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Initialize quiz functionality
+                initializeQuiz();
+            }
+        }
+
+        // Hotel data and functionality for deals
+        const masterHotelList = [
+            {
+                id: 'bellagio',
+                name: 'Bellagio',
+                stars: 5,
+                price: 299,
+                originalPrice: 599,
+                location: 'Strip',
+                amenities: ['Pool', 'Spa', 'Fine Dining', 'Casino'],
+                images: [
+                    '../Las Vegas Last Minute/images/Bellagio/ChatGPT Image Aug 12, 2025, 02_36_37 PM.png',
+                    '../Las Vegas Last Minute/images/Bellagio/ChatGPT Image Aug 12, 2025, 02_36_38 PM.png',
+                    '../Las Vegas Last Minute/images/Bellagio/ChatGPT Image Aug 12, 2025, 02_36_39 PM.png'
+                ],
+                maxTime: 45,
+                dealsLeft: 12,
+                dealCountdowns: [30, 45, 60]
+            },
+            {
+                id: 'caesars-palace',
+                name: 'Caesars Palace',
+                stars: 5,
+                price: 249,
+                originalPrice: 499,
+                location: 'Strip',
+                amenities: ['Pool', 'Spa', 'Fine Dining', 'Casino'],
+                images: [
+                    '../Las Vegas Last Minute/images/Caesars Palace/ChatGPT Image Aug 13, 2025, 03_23_58 PM.png',
+                    '../Las Vegas Last Minute/images/Caesars Palace/ChatGPT Image Aug 13, 2025, 04_01_38 PM.png',
+                    '../Las Vegas Last Minute/images/Caesars Palace/ChatGPT Image Aug 13, 2025, 04_01_42 PM.png'
+                ],
+                maxTime: 30,
+                dealsLeft: 8,
+                dealCountdowns: [20, 35, 50]
+            },
+            {
+                id: 'mgm-grand',
+                name: 'MGM Grand',
+                stars: 4,
+                price: 199,
+                originalPrice: 399,
+                location: 'Strip',
+                amenities: ['Pool', 'Spa', 'Casino', 'Entertainment'],
+                images: [
+                    '../Las Vegas Last Minute/images/MGM Grand/ChatGPT Image Aug 12, 2025, 03_53_17 PM.png',
+                    '../Las Vegas Last Minute/images/MGM Grand/ChatGPT Image Aug 12, 2025, 03_57_35 PM.png',
+                    '../Las Vegas Last Minute/images/MGM Grand/ChatGPT Image Aug 12, 2025, 04_00_32 PM.png'
+                ],
+                maxTime: 60,
+                dealsLeft: 15,
+                dealCountdowns: [40, 55, 70]
+            },
+            {
+                id: 'strat',
+                name: 'The Strat',
+                stars: 3,
+                price: 89,
+                originalPrice: 179,
+                location: 'North Strip',
+                amenities: ['Pool', 'Casino', 'Observation Deck'],
+                images: [
+                    '../Las Vegas Last Minute/images/STRAT/ChatGPT Image Aug 12, 2025, 03_53_17 PM.png',
+                    '../Las Vegas Last Minute/images/STRAT/ChatGPT Image Aug 12, 2025, 03_57_35 PM.png',
+                    '../Las Vegas Last Minute/images/STRAT/ChatGPT Image Aug 12, 2025, 04_04_30 PM.png'
+                ],
+                maxTime: 25,
+                dealsLeft: 6,
+                dealCountdowns: [15, 25, 35]
+            }
+        ];
+
+        // Hotel schedule for deterministic timing
+        const hotelSchedule = [
+            // Group 0: Bellagio → MGM Grand → Strat → Caesars → Bellagio repeat
+            [
+                { id: 'bellagio', maxTime: 45, dealsLeft: 12, dealCountdowns: [30, 45, 60] },
+                { id: 'mgm-grand', maxTime: 60, dealsLeft: 15, dealCountdowns: [40, 55, 70] },
+                { id: 'strat', maxTime: 25, dealsLeft: 6, dealCountdowns: [15, 25, 35] },
+                { id: 'caesars-palace', maxTime: 30, dealsLeft: 8, dealCountdowns: [20, 35, 50] }
+            ]
+        ];
+
+        // Global state for active hotels
+        let globalHotelState = [];
+
+        // Initialize deals functionality
+        function initializeDeals() {
+            initializeGlobalState();
+            initializeVisitorsCount();
+            initializeSorting();
+            updateCountdowns();
+            updateDealsLeft();
+            
+            // Update every second
+            setInterval(() => {
+                updateCountdowns();
+                updateDealsLeft();
+            }, 1000);
+        }
+
+        // Initialize global hotel state
+        function initializeGlobalState() {
+            globalHotelState = [];
+            
+            // Initialize with first hotel from each group
+            for (let groupIndex = 0; groupIndex < 1; groupIndex++) {
+                const hotelData = createHotelFromSchedule(hotelSchedule[groupIndex], groupIndex);
+                if (hotelData) {
+                    globalHotelState[groupIndex] = hotelData;
+                    addHotelCard(hotelData);
+                }
+            }
+        }
+
+        // Create hotel from schedule with deterministic timing
+        function createHotelFromSchedule(scheduleData, slotIndex) {
+            const now = new Date();
+            const nowMs = now.getTime();
+            const today7UTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 7, 0, 0);
+            const baseAnchorMs = nowMs >= today7UTC ? today7UTC : Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 1, 7, 0, 0);
+            
+            const groupIndex = slotIndex;
+            const GROUP_OFFSETS_MS = [0];
+            const anchorMs = baseAnchorMs + (GROUP_OFFSETS_MS[groupIndex] || 0);
+            const group = hotelSchedule[groupIndex];
+            if (!group) {
+                console.error('Group not found for slotIndex:', slotIndex);
+                return null;
+            }
+            
+            const SOLD_OUT_GRACE_MS = 45000;
+            const durationsMs = group.map(h => {
+                const maxMs = h.maxTime * 60 * 1000;
+                const sumDealSec = Array.isArray(h.dealCountdowns) ? h.dealCountdowns.reduce((a, b) => a + b, 0) : 0;
+                const saleMs = sumDealSec > 0 ? sumDealSec * 1000 : maxMs;
+                return Math.min(maxMs, saleMs + SOLD_OUT_GRACE_MS);
+            });
+            const cycleMs = durationsMs.reduce((a, b) => a + b, 0);
+            
+            const timeSinceAnchor = nowMs - anchorMs;
+            const timeIntoCycle = ((timeSinceAnchor % cycleMs) + cycleMs) % cycleMs;
+            
+            const offsets = [];
+            let o = 0;
+            for (let i = 0; i < durationsMs.length; i++) { offsets.push(o); o += durationsMs[i]; }
+            const saleEndOffsets = group.map((h, i) => {
+                const sumDealSec = Array.isArray(h.dealCountdowns) ? h.dealCountdowns.reduce((a, b) => a + b, 0) : 0;
+                const saleMs = sumDealSec > 0 ? sumDealSec * 1000 : durationsMs[i];
+                return offsets[i] + Math.min(saleMs, durationsMs[i]);
+            });
+            
+            let activeIndex = -1;
+            for (let i = 0; i < group.length; i++) {
+                if (timeIntoCycle >= offsets[i] && timeIntoCycle < saleEndOffsets[i]) { activeIndex = i; break; }
+            }
+            let cycleBump = 0;
+            if (activeIndex === -1) { activeIndex = 0; cycleBump = cycleMs; }
+            const activeSchedule = group[activeIndex];
+            const startOffset = offsets[activeIndex];
+            const hotelStartTimeMs = anchorMs + Math.floor(timeSinceAnchor / cycleMs) * cycleMs + cycleBump + startOffset;
+            const hotelEndTimeMs = hotelStartTimeMs + (activeSchedule.maxTime * 60 * 1000);
+            
+            const hotel = masterHotelList.find(h => h.id === activeSchedule.id);
+            if (!hotel) {
+                console.error('Active hotel not found in master list:', activeSchedule.id);
+                return null;
+            }
+            
+            const hotelData = { ...hotel };
+            hotelData.slotPosition = slotIndex;
+            hotelData.initialDeals = activeSchedule.dealsLeft;
+            hotelData.scheduleData = activeSchedule;
+            hotelData.globalStartTime = hotelStartTimeMs;
+            hotelData.endTime = new Date(hotelEndTimeMs).toISOString();
+            
+            console.log(`Slot ${slotIndex} -> ${hotelData.name} (index ${activeIndex}) started ${new Date(hotelStartTimeMs).toUTCString()}, ends ${new Date(hotelEndTimeMs).toUTCString()}`);
+            return hotelData;
+        }
+
+        // Add hotel card to the page
+        function addHotelCard(hotelData) {
+            const hotelListings = document.getElementById('hotel-listings');
+            if (!hotelListings) return;
+            
+            const hotelCard = createHotelCardElement(hotelData);
+            hotelListings.appendChild(hotelCard);
+            
+            // Initialize card dynamics after a short delay
+            setTimeout(() => {
+                initializeCardDynamics(hotelCard);
+            }, 100);
+        }
+
+        // Create hotel card element
+        function createHotelCardElement(hotelData) {
+            const card = document.createElement('article');
+            card.className = 'hotel-card';
+            card.id = `hotel-${hotelData.id}`;
+            card.dataset.slotPosition = hotelData.slotPosition;
+            card.dataset.hotelId = hotelData.id;
+            
+            const savings = hotelData.originalPrice - hotelData.price;
+            const savingsPercent = Math.round((savings / hotelData.originalPrice) * 100);
+            
+            card.innerHTML = `
+                <div class="hotel-image-container">
+                    <div class="hotel-carousel">
+                        ${hotelData.images.map((img, index) => `
+                            <img src="${img}" alt="${hotelData.name} - Image ${index + 1}" 
+                                 class="hotel-image ${index === 0 ? 'active' : ''}" 
+                                 data-index="${index}">
+                        `).join('')}
+                    </div>
+                    <div class="carousel-controls">
+                        <button class="carousel-btn prev" aria-label="Previous image">‹</button>
+                        <button class="carousel-btn next" aria-label="Next image">›</button>
+                    </div>
+                    <div class="countdown-timer" id="countdown-${hotelData.id}">
+                        <span class="time-remaining"></span>
+                    </div>
+                </div>
+                
+                <div class="hotel-info">
+                    <div class="hotel-header">
+                        <h3 class="hotel-name">${hotelData.name}</h3>
+                        <div class="hotel-rating">
+                            ${'★'.repeat(hotelData.stars)}${'☆'.repeat(5 - hotelData.stars)}
+                        </div>
+                    </div>
+                    
+                    <div class="hotel-location">
+                        <span class="location-icon">📍</span>
+                        ${hotelData.location}
+                    </div>
+                    
+                    <div class="hotel-amenities">
+                        ${hotelData.amenities.slice(0, 3).map(amenity => 
+                            `<span class="amenity-tag">${amenity}</span>`
+                        ).join('')}
+                    </div>
+                    
+                    <div class="hotel-pricing">
+                        <div class="price-container">
+                            <span class="current-price">$${hotelData.price}</span>
+                            <span class="original-price">$${hotelData.originalPrice}</span>
+                            <span class="savings">Save $${savings} (${savingsPercent}%)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="hotel-actions">
+                        <div class="deals-left-badge" data-deals-left="${hotelData.initialDeals}">
+                            ⚡ ${hotelData.initialDeals} Left!
+                        </div>
+                        <button class="reveal-deals-btn" onclick="revealDeals('${hotelData.id}')">
+                            Reveal Deals
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Initialize card dynamics
+        function initializeCardDynamics(hotelCard) {
+            const carousel = hotelCard.querySelector('.hotel-carousel');
+            const prevBtn = hotelCard.querySelector('.carousel-btn.prev');
+            const nextBtn = hotelCard.querySelector('.carousel-btn.next');
+            const images = hotelCard.querySelectorAll('.hotel-image');
+            
+            let currentIndex = 0;
+            
+            function showImage(index) {
+                images.forEach((img, i) => {
+                    img.classList.toggle('active', i === index);
+                });
+            }
+            
+            prevBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+                showImage(currentIndex);
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % images.length;
+                showImage(currentIndex);
+            });
+        }
+
+        // Initialize visitors count
+        function initializeVisitorsCount() {
+            const visitorsCount = document.getElementById('visitorsCount');
+            if (!visitorsCount) return;
+            
+            function updateVisitorsCount() {
+                const count = getDeterministicVisitorCount();
+                const visitorsText = visitorsCount.querySelector('.visitors-text');
+                if (visitorsText) {
+                    visitorsText.textContent = `${count} people are viewing deals right now!`;
+                }
+            }
+            
+            updateVisitorsCount();
+            setInterval(updateVisitorsCount, 5000);
+        }
+
+        // Get deterministic visitor count
+        function getDeterministicVisitorCount() {
+            const now = new Date();
+            const hour = now.getUTCHours();
+            const minute = now.getUTCMinutes();
+            const seed = hour * 60 + minute;
+            return 37 + (seed % 152); // Range: 37-188
+        }
+
+        // Initialize sorting functionality
+        function initializeSorting() {
+            const sortSelect = document.getElementById('sort-by');
+            if (!sortSelect) return;
+            
+            sortSelect.addEventListener('change', function() {
+                const sortValue = this.value;
+                sortHotelCards(sortValue);
+            });
+        }
+
+        // Sort hotel cards
+        function sortHotelCards(sortBy) {
+            const hotelListings = document.getElementById('hotel-listings');
+            if (!hotelListings) return;
+            
+            const cards = Array.from(hotelListings.children);
+            
+            cards.sort((a, b) => {
+                switch (sortBy) {
+                    case 'alpha-asc':
+                        return a.querySelector('.hotel-name').textContent.localeCompare(b.querySelector('.hotel-name').textContent);
+                    case 'alpha-desc':
+                        return b.querySelector('.hotel-name').textContent.localeCompare(a.querySelector('.hotel-name').textContent);
+                    case 'time-asc':
+                        return getTimeRemaining(a) - getTimeRemaining(b);
+                    case 'time-desc':
+                        return getTimeRemaining(b) - getTimeRemaining(a);
+                    case 'stars-desc':
+                        return getStarCount(b) - getStarCount(a);
+                    case 'stars-asc':
+                        return getStarCount(a) - getStarCount(b);
+                    case 'deals-desc':
+                        return getDealsLeft(b) - getDealsLeft(a);
+                    case 'deals-asc':
+                        return getDealsLeft(a) - getDealsLeft(b);
+                    default:
+                        return 0;
+                }
+            });
+            
+            cards.forEach(card => hotelListings.appendChild(card));
+        }
+
+        // Helper functions for sorting
+        function getTimeRemaining(card) {
+            const countdown = card.querySelector('.countdown-timer .time-remaining');
+            if (!countdown) return 0;
+            const text = countdown.textContent;
+            const match = text.match(/(\d+):(\d+):(\d+)/);
+            if (match) {
+                return parseInt(match[1]) * 3600 + parseInt(match[2]) * 60 + parseInt(match[3]);
+            }
+            return 0;
+        }
+
+        function getStarCount(card) {
+            const stars = card.querySelector('.hotel-rating');
+            if (!stars) return 0;
+            return (stars.textContent.match(/★/g) || []).length;
+        }
+
+        function getDealsLeft(card) {
+            const badge = card.querySelector('.deals-left-badge');
+            if (!badge) return 0;
+            const text = badge.textContent;
+            const match = text.match(/(\d+)/);
+            return match ? parseInt(match[1]) : 0;
+        }
+
+        // Update countdowns
+        function updateCountdowns() {
+            globalHotelState.forEach((hotelData, index) => {
+                if (hotelData && hotelData.globalStartTime) {
+                    updateCountdownForElement(hotelData);
+                }
+            });
+        }
+
+        // Update countdown for specific element
+        function updateCountdownForElement(hotelData) {
+            const countdownElement = document.querySelector(`#countdown-${hotelData.id} .time-remaining`);
+            if (!countdownElement) return;
+            
+            const now = new Date();
+            const endTime = new Date(hotelData.endTime);
+            const timeRemaining = Math.max(0, endTime.getTime() - now.getTime());
+            
+            if (timeRemaining <= 0) {
+                // Deal expired, replace with next hotel
+                removeSoldOutDeal(hotelData.id);
+                return;
+            }
+            
+            const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+            
+            countdownElement.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Update deals left
+        function updateDealsLeft() {
+            globalHotelState.forEach((hotelData, index) => {
+                if (hotelData && hotelData.scheduleData) {
+                    updateDealsLeftForElement(hotelData);
+                }
+            });
+        }
+
+        // Update deals left for specific element
+        function updateDealsLeftForElement(hotelData) {
+            const badge = document.querySelector(`#hotel-${hotelData.id} .deals-left-badge`);
+            if (!badge) return;
+            
+            const scheduleData = hotelData.scheduleData;
+            const now = new Date();
+            const startTime = new Date(hotelData.globalStartTime);
+            const timePassed = Math.floor((now.getTime() - startTime.getTime()) / 1000);
+            
+            const cumulativeCountdowns = (scheduleData.dealCountdowns || []).reduce((acc, seconds) => {
+                const prev = acc.length > 0 ? acc[acc.length - 1] : 0;
+                acc.push(prev + seconds);
+                return acc;
+            }, []);
+            
+            let expiredDeals = 0;
+            for (let i = 0; i < cumulativeCountdowns.length; i++) {
+                if (timePassed >= cumulativeCountdowns[i]) expiredDeals++;
+            }
+            
+            const initialDeals = scheduleData.dealsLeft || 0;
+            const currentDeals = Math.max(0, initialDeals - expiredDeals);
+            
+            badge.dataset.dealsLeft = String(currentDeals);
+            badge.textContent = currentDeals === 0 ? 'Sold Out!' : `⚡ ${currentDeals} Left!`;
+            
+            if (currentDeals === 0) {
+                // Deal sold out, replace with next hotel
+                removeSoldOutDeal(hotelData.id);
+            }
+        }
+
+        // Remove sold out deal and replace with next
+        function removeSoldOutDeal(hotelId) {
+            const hotelCard = document.getElementById(`hotel-${hotelId}`);
+            if (!hotelCard) return;
+            
+            const slotPosition = parseInt(hotelCard.dataset.slotPosition) || 0;
+            const groupIndex = slotPosition;
+            const currentGroup = hotelSchedule[groupIndex];
+            const currentHotelId = (hotelCard.id || '').replace('hotel-','');
+            const currentIdxInGroup = Math.max(0, currentGroup.findIndex(h => h.id === currentHotelId));
+            const nextIdxInGroup = (currentIdxInGroup + 1) % currentGroup.length;
+            const nextScheduleData = currentGroup[nextIdxInGroup];
+            const newHotelData = createHotelFromSchedule(nextScheduleData, slotPosition);
+            
+            if (newHotelData) {
+                globalHotelState[slotPosition] = newHotelData;
+                
+                // Replace the card
+                const newCard = createHotelCardElement(newHotelData);
+                hotelCard.parentNode.replaceChild(newCard, hotelCard);
+                
+                // Initialize dynamics for new card
+                setTimeout(() => {
+                    initializeCardDynamics(newCard);
+                }, 100);
+            }
+        }
+
+        // Reveal deals function
+        function revealDeals(hotelId) {
+            const hotel = masterHotelList.find(h => h.id === hotelId);
+            if (!hotel) return;
+            
+            alert(`Deals for ${hotel.name}:\n\n` +
+                  `Current Price: $${hotel.price}\n` +
+                  `Original Price: $${hotel.originalPrice}\n` +
+                  `Savings: $${hotel.originalPrice - hotel.price}\n` +
+                  `Location: ${hotel.location}\n` +
+                  `Amenities: ${hotel.amenities.join(', ')}`);
+        }
+
+        // Quiz functionality
+        const quizQuestions = [
+            {
+                question: "What's your budget per night?",
+                options: ["Under $100", "$100-$200", "$200-$400", "$400+"]
+            },
+            {
+                question: "What's most important to you?",
+                options: ["Luxury & comfort", "Location & convenience", "Entertainment & activities", "Value for money"]
+            },
+            {
+                question: "How many stars do you prefer?",
+                options: ["3 stars (budget-friendly)", "4 stars (comfortable)", "5 stars (luxury)", "Any rating"]
+            },
+            {
+                question: "What type of experience are you looking for?",
+                options: ["Relaxation & spa", "Gaming & nightlife", "Family fun", "Shopping & dining"]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+
+        function initializeQuiz() {
+            showQuestion(0);
+        }
+
+        function showQuestion(index) {
+            const questionContainer = document.getElementById('question-container');
+            if (!questionContainer) return;
+            
+            if (index >= quizQuestions.length) {
+                showResult();
+                return;
+            }
+            
+            const question = quizQuestions[index];
+            questionContainer.innerHTML = `
+                <h2>Question ${index + 1} of ${quizQuestions.length}</h2>
+                <p class="question-text">${question.question}</p>
+                <div class="options">
+                    ${question.options.map((option, optionIndex) => `
+                        <button class="option-btn" onclick="selectOption(${optionIndex})">
+                            ${option}
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function selectOption(optionIndex) {
+            userAnswers.push(optionIndex);
+            currentQuestionIndex++;
+            showQuestion(currentQuestionIndex);
+        }
+
+        function showResult() {
+            const questionContainer = document.getElementById('question-container');
+            const resultContainer = document.getElementById('result-container');
+            
+            if (!questionContainer || !resultContainer) return;
+            
+            questionContainer.style.display = 'none';
+            resultContainer.style.display = 'block';
+            
+            const result = generateResult();
+            resultContainer.innerHTML = `
+                <h2>Your Perfect Vegas Hotel Match!</h2>
+                <div class="result-content">
+                    <h3>${result.name}</h3>
+                    <p class="result-description">${result.description}</p>
+                    <div class="result-features">
+                        <h4>Why this hotel is perfect for you:</h4>
+                        <ul>
+                            ${result.features.map(feature => `<li>${feature}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <button class="restart-btn" onclick="restartQuiz()">Take Quiz Again</button>
+                </div>
+            `;
+        }
+
+        function generateResult() {
+            const budget = userAnswers[0];
+            const priority = userAnswers[1];
+            const stars = userAnswers[2];
+            const experience = userAnswers[3];
+            
+            // Simple logic to match hotels based on answers
+            if (budget === 0 && priority === 3) { // Under $100, value for money
+                return {
+                    name: "The Strat",
+                    description: "Perfect for budget-conscious travelers who want great value and a fun atmosphere!",
+                    features: [
+                        "Affordable rates starting under $100",
+                        "Great location on the Strip",
+                        "Access to the observation deck",
+                        "Fun, energetic atmosphere"
+                    ]
+                };
+            } else if (budget >= 2 && priority === 0) { // $200+, luxury
+                return {
+                    name: "Bellagio",
+                    description: "Luxury and elegance at its finest, perfect for those seeking the ultimate Vegas experience!",
+                    features: [
+                        "5-star luxury accommodations",
+                        "Famous fountains and views",
+                        "World-class dining and spa",
+                        "Elegant, sophisticated atmosphere"
+                    ]
+                };
+            } else if (experience === 1) { // Gaming & nightlife
+                return {
+                    name: "MGM Grand",
+                    description: "The entertainment capital of Las Vegas, perfect for those who want non-stop action!",
+                    features: [
+                        "Massive casino and entertainment complex",
+                        "Multiple nightclubs and bars",
+                        "Exciting atmosphere",
+                        "Great location on the Strip"
+                    ]
+                };
+            } else {
+                return {
+                    name: "Caesars Palace",
+                    description: "A classic Vegas experience with something for everyone!",
+                    features: [
+                        "Iconic Las Vegas atmosphere",
+                        "Great location and amenities",
+                        "Suitable for various preferences",
+                        "Good balance of luxury and value"
+                    ]
+                };
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            const questionContainer = document.getElementById('question-container');
+            const resultContainer = document.getElementById('result-container');
+            
+            if (questionContainer && resultContainer) {
+                questionContainer.style.display = 'block';
+                resultContainer.style.display = 'none';
+                showQuestion(0);
+            }
+        }
+    </script>
+</body>
+</html> 
