@@ -158,7 +158,36 @@
             transform: translateY(-1px);
         }
         
-
+        /* Mobile responsive header adjustments */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: var(--spacing-md) var(--spacing-lg);
+            }
+            
+            .logo .brand-name {
+                font-size: 0.75rem;
+                margin-bottom: var(--spacing-xs);
+            }
+            
+            .logo h1 {
+                font-size: 1.75rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .navbar {
+                padding: var(--spacing-sm) var(--spacing-md);
+            }
+            
+            .logo .brand-name {
+                font-size: 0.7rem;
+                margin-bottom: 2px;
+            }
+            
+            .logo h1 {
+                font-size: 1.5rem;
+            }
+        }
         
         .nav-links {
             display: flex;
