@@ -1861,16 +1861,25 @@
             return `$${price}`;
         }
 
-        function getRandomDateRange() {
+        function getHotelDateRange(hotelName = 'default') {
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const startDay = Math.floor(Math.random() * 25) + 1;
-            const duration = Math.floor(Math.random() * 5) + 2; // 2-6 days
+            
+            // Create a deterministic seed from the hotel name
+            let seed = 0;
+            for (let i = 0; i < hotelName.length; i++) {
+                seed += hotelName.charCodeAt(i);
+            }
+            
+            // Use the seed to generate consistent dates for each hotel
+            const startDay = (seed % 25) + 1;
+            const duration = (seed % 5) + 2; // 2-6 days
             const endDay = startDay + duration;
-            const startMonth = months[Math.floor(Math.random() * 12)];
+            const startMonthIndex = seed % 12;
+            const startMonth = months[startMonthIndex];
             
             // Handle month overflow for longer stays
             if (endDay > 28) {
-                const nextMonthIndex = (months.indexOf(startMonth) + 1) % 12;
+                const nextMonthIndex = (startMonthIndex + 1) % 12;
                 const nextMonth = months[nextMonthIndex];
                 return `${startMonth} ${startDay} - ${nextMonth} ${endDay - 28}`;
             } else {
@@ -2012,7 +2021,7 @@
                         <div class="deal-row">
                             <div class="deal-item">
                                 <span class="deal-label">Dates:</span>
-                                <span class="blurred-text">${getRandomDateRange()}</span>
+                                <span class="blurred-text">${getHotelDateRange(hotel.name)}</span>
                             </div>
                             <div class="deal-item">
                                 <span class="deal-label">Price:</span>
